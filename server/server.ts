@@ -1,10 +1,22 @@
-import express from "express";
 import dotenv from "dotenv";
+import http from "http";
+import prisma from "./db/prisma.client";
+import app from "./app";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 9000;
 
-const server = express();
+let server: http.Server;
 
-server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+prisma
+  .$connect()
+  .then(() => {
+    console.log("Prisma is connected");
+    server = app.listen(PORT, () =>
+      console.log(`Server running on port ${PORT}`)
+    );
+  })
+  .catch((error) => {
+    console.error("Failed to connect to Prisma:", error);
+  });
