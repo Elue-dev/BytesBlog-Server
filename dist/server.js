@@ -4,6 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const PORT = process.env.PORT || 8000;
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+const PORT = process.env.PORT || 9000;
 const server = (0, express_1.default)();
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
