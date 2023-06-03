@@ -6,7 +6,7 @@ import { LoginPayload, SignUpPayload } from "../models/types/auth";
 import CryptoJS from "crypto-js";
 import { User } from "../models/types/user";
 import { generateToken } from "../lib/generate.token";
-import { welcome } from "../views/welcome";
+import { welcome } from "../views/welcome.email";
 import sendEmail from "../services/email.service";
 import { createHash, randomBytes } from "crypto";
 import { passwordResetEmail } from "../views/reset.email";

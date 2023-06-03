@@ -29,7 +29,7 @@ const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
 const crypto_js_1 = __importDefault(require("crypto-js"));
 const generate_token_1 = require("../lib/generate.token");
-const welcome_1 = require("../views/welcome");
+const welcome_email_1 = require("../views/welcome.email");
 const email_service_1 = __importDefault(require("../services/email.service"));
 const crypto_1 = require("crypto");
 const reset_email_1 = require("../views/reset.email");
@@ -62,7 +62,7 @@ exports.signup = (0, async_handler_1.default)((req, res, next) => __awaiter(void
     const send_to = newUser.email;
     const sent_from = process.env.EMAIL_USER;
     const reply_to = process.env.REPLY_TO;
-    const body = (0, welcome_1.welcome)(newUser.lastName);
+    const body = (0, welcome_email_1.welcome)(newUser.lastName);
     try {
         (0, email_service_1.default)({ subject, body, send_to, sent_from, reply_to });
         res.status(201).json({
