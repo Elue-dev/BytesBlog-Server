@@ -5,6 +5,7 @@ import { AppError } from "../helpers/global.error";
 import { LoginPayload, SignUpPayload } from "../models/types/auth";
 import CryptoJS from "crypto-js";
 import { User } from "../models/types/user";
+import { generateToken } from "../lib/generate.token";
 
 export const signup = handleAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -89,9 +90,14 @@ export const login = handleAsync(
     if (originalPassword !== password)
       return next(new AppError("Invalid credentials provided", 400));
 
-    res.status(201).json({
+    const token = generateToken(user.id);
+    const { password: _password, ...userWithoutPassword } = user;
+
+    const userInfo = { token, ...userWithoutPassword };
+
+    res.status(200).json({
       status: "success",
-      user,
+      user: userInfo,
     });
   }
 );
