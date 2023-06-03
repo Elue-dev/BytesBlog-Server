@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signup = void 0;
+exports.login = exports.signup = void 0;
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
@@ -46,5 +46,27 @@ exports.signup = (0, async_handler_1.default)((req, res, next) => __awaiter(void
         status: "success",
         user: newUser,
         message: "User created.",
+    });
+}));
+exports.login = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password } = req.body;
+    let missingFields = [];
+    let bodyObject = { email, password };
+    for (let field in bodyObject) {
+        if (!req.body[field])
+            missingFields.push(field);
+    }
+    if (missingFields.length > 0)
+        return next(new global_error_1.AppError(`user ${missingFields.join(", ")} ${missingFields.length > 1 ? "are" : "is"} required`, 400));
+    const user = yield prisma_client_1.default.user.findFirst({ where: { email } });
+    if (!user)
+        return next(new global_error_1.AppError("Invalid credentials provided", 400));
+    const bytes = crypto_js_1.default.AES.decrypt(user.password, process.env.SECRET_KEY);
+    const originalPassword = bytes.toString(crypto_js_1.default.enc.Utf8);
+    if (originalPassword !== password)
+        return next(new global_error_1.AppError("Invalid credentials provided", 400));
+    res.status(201).json({
+        status: "success",
+        user,
     });
 }));
