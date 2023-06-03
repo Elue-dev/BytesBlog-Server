@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.forgotPassword = exports.login = exports.signup = void 0;
+exports.forgotPassword = exports.googleLogin = exports.login = exports.signup = void 0;
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
@@ -34,9 +34,15 @@ const email_service_1 = __importDefault(require("../services/email.service"));
 const crypto_1 = require("crypto");
 const reset_email_1 = require("../views/reset.email");
 exports.signup = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { firstname, lastname, email, password, interests } = req.body;
+    const { firstname, lastname, email, password, interests, avatar, } = req.body;
     let missingFields = [];
-    let bodyObject = { firstname, lastname, email, password, interests };
+    let bodyObject = {
+        firstname,
+        lastname,
+        email,
+        password,
+        interests,
+    };
     for (let field in bodyObject) {
         if (!req.body[field])
             missingFields.push(field);
@@ -53,7 +59,7 @@ exports.signup = (0, async_handler_1.default)((req, res, next) => __awaiter(void
             lastName: lastname,
             email,
             password: passwordHash,
-            avatar: "",
+            avatar: avatar || "",
             interests,
             bio: "",
         },
@@ -94,6 +100,19 @@ exports.login = (0, async_handler_1.default)((req, res, next) => __awaiter(void 
     const originalPassword = bytes.toString(crypto_js_1.default.enc.Utf8);
     if (originalPassword !== password)
         return next(new global_error_1.AppError("Invalid credentials provided", 400));
+    const token = (0, generate_token_1.generateToken)(user.id);
+    const { password: _password } = user, userWithoutPassword = __rest(user, ["password"]);
+    const userInfo = Object.assign({ token }, userWithoutPassword);
+    res.status(200).json({
+        status: "success",
+        user: userInfo,
+    });
+}));
+exports.googleLogin = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.body;
+    const user = yield prisma_client_1.default.user.findFirst({ where: { email } });
+    if (!user)
+        return next(new global_error_1.AppError("User not found", 400));
     const token = (0, generate_token_1.generateToken)(user.id);
     const { password: _password } = user, userWithoutPassword = __rest(user, ["password"]);
     const userInfo = Object.assign({ token }, userWithoutPassword);

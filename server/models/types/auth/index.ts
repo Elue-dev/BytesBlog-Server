@@ -2,6 +2,7 @@ export interface SignUpPayload {
   firstname: string;
   lastname: string;
   email: string;
+  avatar: string;
   password: string;
   interests: string;
 }

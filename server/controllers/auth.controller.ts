@@ -13,11 +13,23 @@ import { passwordResetEmail } from "../views/reset.email";
 
 export const signup = handleAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { firstname, lastname, email, password, interests }: SignUpPayload =
-      req.body;
+    const {
+      firstname,
+      lastname,
+      email,
+      password,
+      interests,
+      avatar,
+    }: SignUpPayload = req.body;
 
     let missingFields = [];
-    let bodyObject = { firstname, lastname, email, password, interests };
+    let bodyObject = {
+      firstname,
+      lastname,
+      email,
+      password,
+      interests,
+    };
 
     for (let field in bodyObject) {
       if (!req.body[field]) missingFields.push(field);
@@ -47,7 +59,7 @@ export const signup = handleAsync(
         lastName: lastname,
         email,
         password: passwordHash,
-        avatar: "",
+        avatar: avatar || "",
         interests,
         bio: "",
       },
@@ -106,6 +118,25 @@ export const login = handleAsync(
 
     if (originalPassword !== password)
       return next(new AppError("Invalid credentials provided", 400));
+
+    const token = generateToken(user.id);
+    const { password: _password, ...userWithoutPassword } = user;
+
+    const userInfo = { token, ...userWithoutPassword };
+
+    res.status(200).json({
+      status: "success",
+      user: userInfo,
+    });
+  }
+);
+
+export const googleLogin = handleAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+
+    const user: User | null = await prisma.user.findFirst({ where: { email } });
+    if (!user) return next(new AppError("User not found", 400));
 
     const token = generateToken(user.id);
     const { password: _password, ...userWithoutPassword } = user;

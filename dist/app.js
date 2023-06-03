@@ -49,7 +49,7 @@ app.use((req, res, next) => {
 app.use("/api/v1/auth", auth_routes_1.default);
 app.use("/api/v1/users", user_routes_1.default);
 app.all("*", (req, res, next) => {
-    next(new global_error_1.AppError(`Can't find ${req.originalUrl} on this server`, 404));
+    next(new global_error_1.AppError(`Can't find ${req.originalUrl} with method ${req.method} on this server`, 404));
 });
 app.use(error_1.default);
 exports.default = app;
