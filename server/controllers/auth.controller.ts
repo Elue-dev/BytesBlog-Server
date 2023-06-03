@@ -6,6 +6,9 @@ import { LoginPayload, SignUpPayload } from "../models/types/auth";
 import CryptoJS from "crypto-js";
 import { User } from "../models/types/user";
 import { generateToken } from "../lib/generate.token";
+import { welcome } from "../views/welcome";
+import sendEmail from "../services/email.service";
+import { createHash, randomBytes } from "crypto";
 
 export const signup = handleAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -37,7 +40,7 @@ export const signup = handleAsync(
       process.env.SECRET_KEY as string
     ).toString();
 
-    const newUser = await prisma.user.create({
+    const newUser: User = await prisma.user.create({
       data: {
         firstName: firstname,
         lastName: lastname,
@@ -49,11 +52,24 @@ export const signup = handleAsync(
       },
     });
 
-    res.status(201).json({
-      status: "success",
-      user: newUser,
-      message: "User created.",
-    });
+    const subject = `Welcome Onboard, ${newUser.firstName}!`;
+    const send_to = newUser.email;
+    const sent_from = process.env.EMAIL_USER as string;
+    const reply_to = process.env.REPLY_TO as string;
+    const body = welcome(newUser.lastName);
+
+    try {
+      sendEmail({ subject, body, send_to, sent_from, reply_to });
+      res.status(201).json({
+        status: "success",
+        message: "User created.",
+      });
+    } catch (error) {
+      res.status(500).json({
+        status: "fail",
+        message: `Something went wrong. Please try again.`,
+      });
+    }
   }
 );
 
@@ -99,5 +115,24 @@ export const login = handleAsync(
       status: "success",
       user: userInfo,
     });
+  }
+);
+
+export const forgotPassword = handleAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+    if (!email)
+      return next(
+        new AppError(
+          "Please provide the email associated with your account",
+          400
+        )
+      );
+
+    const user = await prisma.user.findFirst({ where: { email } });
+    if (!user) return next(new AppError("That email is not registered", 404));
+
+    const resetToken = randomBytes(32).toString("hex") + user.id;
+    const hashedToken = createHash("sha256").update(resetToken).digest("hex");
   }
 );

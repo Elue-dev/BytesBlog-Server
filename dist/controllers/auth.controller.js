@@ -23,12 +23,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.signup = void 0;
+exports.forgotPassword = exports.login = exports.signup = void 0;
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
 const crypto_js_1 = __importDefault(require("crypto-js"));
 const generate_token_1 = require("../lib/generate.token");
+const welcome_1 = require("../views/welcome");
+const email_service_1 = __importDefault(require("../services/email.service"));
+const crypto_1 = require("crypto");
 exports.signup = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { firstname, lastname, email, password, interests } = req.body;
     let missingFields = [];
@@ -54,11 +57,24 @@ exports.signup = (0, async_handler_1.default)((req, res, next) => __awaiter(void
             bio: "",
         },
     });
-    res.status(201).json({
-        status: "success",
-        user: newUser,
-        message: "User created.",
-    });
+    const subject = `Welcome Onboard, ${newUser.firstName}!`;
+    const send_to = newUser.email;
+    const sent_from = process.env.EMAIL_USER;
+    const reply_to = process.env.REPLY_TO;
+    const body = (0, welcome_1.welcome)(newUser.lastName);
+    try {
+        (0, email_service_1.default)({ subject, body, send_to, sent_from, reply_to });
+        res.status(201).json({
+            status: "success",
+            message: "User created.",
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            status: "fail",
+            message: `Something went wrong. Please try again.`,
+        });
+    }
 }));
 exports.login = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
@@ -84,4 +100,14 @@ exports.login = (0, async_handler_1.default)((req, res, next) => __awaiter(void 
         status: "success",
         user: userInfo,
     });
+}));
+exports.forgotPassword = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.body;
+    if (!email)
+        return next(new global_error_1.AppError("Please provide the email associated with your account", 400));
+    const user = yield prisma_client_1.default.user.findFirst({ where: { email } });
+    if (!user)
+        return next(new global_error_1.AppError("That email is not registered", 404));
+    const resetToken = (0, crypto_1.randomBytes)(32).toString("hex") + user.id;
+    const hashedToken = (0, crypto_1.createHash)("sha256").update(resetToken).digest("hex");
 }));

@@ -27,6 +27,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const global_error_1 = require("./helpers/global.error");
 const error_1 = __importDefault(require("./helpers/error"));
@@ -39,6 +40,9 @@ app.use((req, res, next) => {
 });
 app.use((0, express_1.json)());
 app.use((0, cookie_parser_1.default)());
+app.use((0, cors_1.default)({
+    origin: ["http://localhost:5173", "https://bytes-blog-client.vercel.app/"],
+}));
 app.use((req, res, next) => {
     next();
 });

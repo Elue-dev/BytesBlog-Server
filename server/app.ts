@@ -1,5 +1,5 @@
 import express, { json } from "express";
-
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import { AppError } from "./helpers/global.error";
 import errorHandler from "./helpers/error";
@@ -15,6 +15,11 @@ app.use((req, res, next) => {
 
 app.use(json());
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://bytes-blog-client.vercel.app/"],
+  })
+);
 
 app.use((req, res, next) => {
   next();

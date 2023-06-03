@@ -87,3 +87,13 @@ model Bookmark {
 
    @@map(name: "bookmarks")
 }
+
+model Token {
+  id String @id @default(uuid())
+  token String
+  userId String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@map(name: "token")
+}
