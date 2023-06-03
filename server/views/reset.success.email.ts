@@ -1,3 +1,4 @@
+import { formatDate } from "../helpers/date.formatter";
 import { resetSuccessType } from "../models/types/general";
 
 export const resetSuccess = ({ username, browser, OS }: resetSuccessType) => {
@@ -135,7 +136,7 @@ export const resetSuccess = ({ username, browser, OS }: resetSuccessType) => {
                               margin: 0;
                             "
                           >
-                            <b>Date:</b> ${new Date().toDateString()}
+                            <b>Date:</b> ${formatDate(new Date())}
                           </p>
                           <p
                             style="

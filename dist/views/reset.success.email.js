@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resetSuccess = void 0;
+const date_formatter_1 = require("../helpers/date.formatter");
 const resetSuccess = ({ username, browser, OS }) => {
     return `
               
@@ -136,7 +137,7 @@ const resetSuccess = ({ username, browser, OS }) => {
                               margin: 0;
                             "
                           >
-                            <b>Date:</b> ${new Date().toDateString()}
+                            <b>Date:</b> ${(0, date_formatter_1.formatDate)(new Date())}
                           </p>
                           <p
                             style="
