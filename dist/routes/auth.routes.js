@@ -7,4 +7,5 @@ router.post("/signup", auth_controller_1.signup);
 router.post("/login", auth_controller_1.login);
 router.post("/login/google", auth_controller_1.googleLogin);
 router.post("/forgot-password", auth_controller_1.forgotPassword);
+router.post("/reset-password/:token", auth_controller_1.resetPassword);
 exports.default = router;

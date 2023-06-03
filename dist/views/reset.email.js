@@ -175,7 +175,7 @@ const passwordResetEmail = ({ username, url }) => {
                         margin: 0 0 0;
                       "
                     >
-                      &copy; <strong>Clarestate Inc, Nigeria</strong>
+                      &copy; <strong>BytesBlog Inc</strong>
                     </p>
                   </td>
                 </tr>

@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.forgotPassword = exports.googleLogin = exports.login = exports.signup = void 0;
+exports.resetPassword = exports.forgotPassword = exports.googleLogin = exports.login = exports.signup = void 0;
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
@@ -32,7 +32,9 @@ const generate_token_1 = require("../lib/generate.token");
 const welcome_email_1 = require("../views/welcome.email");
 const email_service_1 = __importDefault(require("../services/email.service"));
 const crypto_1 = require("crypto");
+const ua_parser_js_1 = __importDefault(require("ua-parser-js"));
 const reset_email_1 = require("../views/reset.email");
+const reset_success_email_1 = require("../views/reset.success.email");
 exports.signup = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { firstname, lastname, email, password, interests, avatar, } = req.body;
     let missingFields = [];
@@ -112,7 +114,7 @@ exports.googleLogin = (0, async_handler_1.default)((req, res, next) => __awaiter
     const { email } = req.body;
     const user = yield prisma_client_1.default.user.findFirst({ where: { email } });
     if (!user)
-        return next(new global_error_1.AppError("User not found", 400));
+        return next(new global_error_1.AppError("User not found", 404));
     const token = (0, generate_token_1.generateToken)(user.id);
     const { password: _password } = user, userWithoutPassword = __rest(user, ["password"]);
     const userInfo = Object.assign({ token }, userWithoutPassword);
@@ -152,6 +154,69 @@ exports.forgotPassword = (0, async_handler_1.default)((req, res, next) => __awai
             status: "success",
             message: `An email has been sent to ${email} with instructions
         to reset your password`,
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            status: "fail",
+            message: `Email not sent. Please try again.`,
+        });
+    }
+}));
+exports.resetPassword = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { newPassword, confirmNewPassword } = req.body;
+    const { token } = req.params;
+    if (!newPassword || !confirmNewPassword)
+        return next(new global_error_1.AppError("Please provide all password credentials", 400));
+    if (newPassword !== confirmNewPassword)
+        return next(new global_error_1.AppError("New password credentials do not match", 400));
+    const decryptedToken = (0, crypto_1.createHash)("sha256").update(token).digest("hex");
+    const existingToken = yield prisma_client_1.default.token.findFirst({
+        where: {
+            token: decryptedToken,
+            expiresAt: {
+                gt: new Date(),
+            },
+        },
+    });
+    if (!existingToken)
+        return next(new global_error_1.AppError("Invalid or expired token", 400));
+    const user = yield prisma_client_1.default.user.findFirst({
+        where: { id: existingToken === null || existingToken === void 0 ? void 0 : existingToken.userId },
+    });
+    console.log("User ID:", user);
+    console.log("Existing Token:", existingToken);
+    const passwordHash = crypto_js_1.default.AES.encrypt(newPassword, process.env.SECRET_KEY).toString();
+    yield prisma_client_1.default.user.update({
+        where: {
+            id: user === null || user === void 0 ? void 0 : user.id,
+        },
+        data: {
+            password: passwordHash,
+        },
+    });
+    yield prisma_client_1.default.token.delete({
+        where: {
+            id: existingToken === null || existingToken === void 0 ? void 0 : existingToken.id,
+        },
+    });
+    const userAgent = (0, ua_parser_js_1.default)(req.headers["user-agent"]);
+    const browser = userAgent.browser.name || "Not detected";
+    const OS = `${userAgent.os.name || "Not detected"} (${userAgent.os.version || "Not detected"})`;
+    const subject = `${user === null || user === void 0 ? void 0 : user.firstName}, Your password was successfully reset`;
+    const send_to = user === null || user === void 0 ? void 0 : user.email;
+    const sent_from = process.env.EMAIL_USER;
+    const reply_to = process.env.REPLY_TO;
+    const body = (0, reset_success_email_1.resetSuccess)({
+        username: user === null || user === void 0 ? void 0 : user.lastName,
+        browser,
+        OS,
+    });
+    try {
+        (0, email_service_1.default)({ subject, body, send_to, sent_from, reply_to });
+        res.status(200).json({
+            status: "success",
+            message: `Password reset successful!`,
         });
     }
     catch (error) {

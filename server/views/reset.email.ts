@@ -174,7 +174,7 @@ export const passwordResetEmail = ({ username, url }: passwordResetType) => {
                         margin: 0 0 0;
                       "
                     >
-                      &copy; <strong>Clarestate Inc, Nigeria</strong>
+                      &copy; <strong>BytesBlog Inc</strong>
                     </p>
                   </td>
                 </tr>

@@ -5,3 +5,9 @@ export interface Email {
   sent_from: string;
   reply_to: string;
 }
+
+export interface resetSuccessType {
+  username: string | undefined;
+  browser: string;
+  OS: string;
+}
