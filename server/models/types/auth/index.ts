@@ -7,3 +7,8 @@ export interface SignUpPayload {
 }
 
 export type LoginPayload = Pick<SignUpPayload, "email" | "password">;
+
+export interface passwordResetType {
+  username: string;
+  url: string;
+}
