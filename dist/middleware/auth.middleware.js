@@ -26,7 +26,7 @@ exports.verifyAuth = (0, async_handler_1.default)((req, res, next) => __awaiter(
         return next(new global_error_1.AppError("You are not logged in. Please login to get access", 400));
     try {
         const verifiedToken = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-        const currentUser = yield prisma_client_1.default.user.findUnique({
+        const currentUser = yield prisma_client_1.default.user.findFirst({
             where: { id: verifiedToken.id },
         });
         req.user = currentUser;

@@ -22,10 +22,9 @@ export const verifyAuth = handleAsync(
         process.env.JWT_SECRET as string
       ) as JwtPayload;
 
-      const currentUser: User | null = await prisma.user.findUnique({
+      const currentUser: User | null = await prisma.user.findFirst({
         where: { id: verifiedToken.id },
       });
-
       (req as AuthenticatedRequest).user = currentUser;
     } catch (error) {
       return next(new AppError("Session expired. Please log in again", 401));

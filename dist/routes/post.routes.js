@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const user_controller_1 = require("../controllers/user.controller");
+const post_controller_1 = require("../controllers/post.controller");
 const auth_middleware_1 = require("../middleware/auth.middleware");
 const router = (0, express_1.Router)();
-router.route("/").get(user_controller_1.getUsers).put(auth_middleware_1.verifyAuth, user_controller_1.updateUser);
-router.route("/:userId").get(user_controller_1.getSingleUser);
+router.route("/").get(post_controller_1.getPosts).post(auth_middleware_1.verifyAuth, post_controller_1.addPost);
 exports.default = router;

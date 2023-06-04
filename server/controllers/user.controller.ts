@@ -4,6 +4,7 @@ import prisma from "../db/prisma.client";
 import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
 import { generateToken } from "../lib/generate.token";
+import { AuthenticatedRequest } from "../models/types/auth";
 
 export const getUsers = handleAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -31,9 +32,8 @@ export const getSingleUser = handleAsync(
 );
 
 export const updateUser = handleAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { firstName, lastName, avatar, bio, interests } = req.body;
-    console.log({ avatar });
 
     if (!firstName && !lastName && !avatar && !bio && !interests)
       return next(
@@ -45,7 +45,7 @@ export const updateUser = handleAsync(
 
     const existingUser = await prisma.user.findFirst({
       where: {
-        id: req.params.userId,
+        id: req.user?.id,
       },
     });
 
