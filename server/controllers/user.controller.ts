@@ -3,6 +3,7 @@ import prisma from "../db/prisma.client";
 
 import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
+import { generateToken } from "../lib/generate.token";
 
 export const getUsers = handleAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -41,26 +42,31 @@ export const updateUser = handleAsync(
         )
       );
 
-    const user = await prisma.user.findFirst({
+    const existingUser = await prisma.user.findFirst({
       where: {
         id: req.params.userId,
       },
     });
 
-    if (!user) return next(new AppError("User could not be found", 404));
+    if (!existingUser)
+      return next(new AppError("User could not be found", 404));
 
-    const updatedUser = await prisma.user.update({
+    const user = await prisma.user.update({
       where: {
-        id: user.id,
+        id: existingUser.id,
       },
       data: {
-        firstName: firstName || user.firstName,
-        lastName: lastName || user.lastName,
-        avatar: avatar || user.avatar,
-        bio: bio || user.bio,
-        interests: interests || user.interests,
+        firstName: firstName || existingUser.firstName,
+        lastName: lastName || existingUser.lastName,
+        avatar: avatar || existingUser.avatar,
+        bio: bio || existingUser.bio,
+        interests: interests || existingUser.interests,
       },
     });
+
+    const token = generateToken(existingUser.id);
+    const { password: _password, ...userWithoutPassword } = user;
+    const updatedUser = { token, ...userWithoutPassword };
 
     res.status(200).json({
       status: "success",
