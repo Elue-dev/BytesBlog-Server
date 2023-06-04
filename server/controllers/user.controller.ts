@@ -33,6 +33,7 @@ export const getSingleUser = handleAsync(
 export const updateUser = handleAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { firstName, lastName, avatar, bio, interests } = req.body;
+    console.log({ avatar });
 
     if (!firstName && !lastName && !avatar && !bio && !interests)
       return next(

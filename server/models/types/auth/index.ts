@@ -1,3 +1,5 @@
+import { Request } from "express";
+import { User } from "../user";
 export interface SignUpPayload {
   firstname: string;
   lastname: string;
@@ -12,4 +14,8 @@ export type LoginPayload = Pick<SignUpPayload, "email" | "password">;
 export interface passwordResetType {
   username: string;
   url: string;
+}
+
+export interface AuthenticatedRequest extends Request {
+  user?: User | null;
 }
