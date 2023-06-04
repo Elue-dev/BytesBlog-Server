@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPosts = exports.addPost = void 0;
+exports.updatePost = exports.getSinglePost = exports.getPosts = exports.addPost = void 0;
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
@@ -42,6 +42,48 @@ exports.addPost = (0, async_handler_1.default)((req, res, next) => __awaiter(voi
     });
 }));
 exports.getPosts = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const posts = yield prisma_client_1.default.post.findMany({
+        include: {
+            author: {
+                select: {
+                    id: true,
+                    avatar: true,
+                    firstName: true,
+                    lastName: true,
+                },
+            },
+        },
+    });
+    res.status(200).json({
+        status: "success",
+        posts,
+    });
+}));
+exports.getSinglePost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const post = yield prisma_client_1.default.post.findMany({
+        where: {
+            id: req.params.postId,
+        },
+        include: {
+            author: {
+                select: {
+                    id: true,
+                    avatar: true,
+                    firstName: true,
+                    lastName: true,
+                },
+            },
+            bookmarks: true,
+            comments: true,
+            likes: true,
+        },
+    });
+    res.status(200).json({
+        status: "success",
+        post,
+    });
+}));
+exports.updatePost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const posts = yield prisma_client_1.default.post.findMany({
         include: {
             author: {

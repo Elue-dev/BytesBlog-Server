@@ -63,3 +63,53 @@ export const getPosts = handleAsync(
     });
   }
 );
+
+export const getSinglePost = handleAsync(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const post = await prisma.post.findMany({
+      where: {
+        id: req.params.postId,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            avatar: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+        bookmarks: true,
+        comments: true,
+        likes: true,
+      },
+    });
+
+    res.status(200).json({
+      status: "success",
+      post,
+    });
+  }
+);
+
+export const updatePost = handleAsync(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const posts = await prisma.post.findMany({
+      include: {
+        author: {
+          select: {
+            id: true,
+            avatar: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      status: "success",
+      posts,
+    });
+  }
+);
