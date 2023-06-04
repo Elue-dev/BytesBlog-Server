@@ -94,22 +94,39 @@ export const getSinglePost = handleAsync(
 
 export const updatePost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const posts = await prisma.post.findMany({
-      include: {
-        author: {
-          select: {
-            id: true,
-            avatar: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
+    const { title, content, image, readTime } = req.body;
+
+    if (!title && !content && !image && !readTime)
+      return next(
+        new AppError(
+          "Please provide at least one detail you want to update",
+          400
+        )
+      );
+
+    const post = await prisma.post.findFirst({
+      where: {
+        id: req.params.postId,
+      },
+    });
+
+    if (!post) return next(new AppError("Post could not be found", 404));
+
+    const updatedPost = await prisma.post.update({
+      where: {
+        id: req.params.postId,
+      },
+      data: {
+        title: title || post.title,
+        content: content || post.content,
+        image: image || post.image,
+        readTime: readTime || post.readTime,
       },
     });
 
     res.status(200).json({
       status: "success",
-      posts,
+      updatedPost,
     });
   }
 );

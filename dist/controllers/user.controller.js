@@ -52,7 +52,7 @@ exports.updateUser = (0, async_handler_1.default)((req, res, next) => __awaiter(
     var _a;
     const { firstName, lastName, avatar, bio, interests } = req.body;
     if (!firstName && !lastName && !avatar && !bio && !interests)
-        return next(new global_error_1.AppError("Please provide at least one credential you want to update", 404));
+        return next(new global_error_1.AppError("Please provide at least one credential you want to update", 400));
     const existingUser = yield prisma_client_1.default.user.findFirst({
         where: {
             id: (_a = req.user) === null || _a === void 0 ? void 0 : _a.id,

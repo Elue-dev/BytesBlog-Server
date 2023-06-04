@@ -39,7 +39,7 @@ export const updateUser = handleAsync(
       return next(
         new AppError(
           "Please provide at least one credential you want to update",
-          404
+          400
         )
       );
 

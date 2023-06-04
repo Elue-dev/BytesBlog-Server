@@ -84,20 +84,29 @@ exports.getSinglePost = (0, async_handler_1.default)((req, res, next) => __await
     });
 }));
 exports.updatePost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const posts = yield prisma_client_1.default.post.findMany({
-        include: {
-            author: {
-                select: {
-                    id: true,
-                    avatar: true,
-                    firstName: true,
-                    lastName: true,
-                },
-            },
+    const { title, content, image, readTime } = req.body;
+    if (!title && !content && !image && !readTime)
+        return next(new global_error_1.AppError("Please provide at least one detail you want to update", 400));
+    const post = yield prisma_client_1.default.post.findFirst({
+        where: {
+            id: req.params.postId,
+        },
+    });
+    if (!post)
+        return next(new global_error_1.AppError("Post could not be found", 404));
+    const updatedPost = yield prisma_client_1.default.post.update({
+        where: {
+            id: req.params.postId,
+        },
+        data: {
+            title: title || post.title,
+            content: content || post.content,
+            image: image || post.image,
+            readTime: readTime || post.readTime,
         },
     });
     res.status(200).json({
         status: "success",
-        posts,
+        updatedPost,
     });
 }));
