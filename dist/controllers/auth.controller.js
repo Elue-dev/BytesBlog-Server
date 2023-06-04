@@ -114,7 +114,7 @@ exports.googleLogin = (0, async_handler_1.default)((req, res, next) => __awaiter
     const { email } = req.body;
     const user = yield prisma_client_1.default.user.findFirst({ where: { email } });
     if (!user)
-        return next(new global_error_1.AppError("User not found", 404));
+        return next(new global_error_1.AppError("User not registered. Sign up with google first", 404));
     const token = (0, generate_token_1.generateToken)(user.id);
     const { password: _password } = user, userWithoutPassword = __rest(user, ["password"]);
     const userInfo = Object.assign({ token }, userWithoutPassword);
@@ -184,8 +184,6 @@ exports.resetPassword = (0, async_handler_1.default)((req, res, next) => __await
     const user = yield prisma_client_1.default.user.findFirst({
         where: { id: existingToken === null || existingToken === void 0 ? void 0 : existingToken.userId },
     });
-    console.log("User ID:", user);
-    console.log("Existing Token:", existingToken);
     const passwordHash = crypto_js_1.default.AES.encrypt(newPassword, process.env.SECRET_KEY).toString();
     yield prisma_client_1.default.user.update({
         where: {

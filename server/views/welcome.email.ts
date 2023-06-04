@@ -154,7 +154,7 @@ export const welcome = (username: string) => {
                         margin: 0 0 0;
                       "
                     >
-                      &copy; <strong> Bytes Blog Inc.</strong>
+                    <strong> &copy; ${new Date().getFullYear()}. Bytes Blog Inc.</strong>
                     </p>
                   </td>
                 </tr>

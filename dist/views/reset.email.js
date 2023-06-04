@@ -175,7 +175,7 @@ const passwordResetEmail = ({ username, url }) => {
                         margin: 0 0 0;
                       "
                     >
-                      &copy; <strong>BytesBlog Inc</strong>
+                    <strong>  &copy; ${new Date().getFullYear()}. BytesBlog Inc</>
                     </p>
                   </td>
                 </tr>

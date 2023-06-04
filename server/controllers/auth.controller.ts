@@ -138,7 +138,10 @@ export const googleLogin = handleAsync(
     const { email } = req.body;
 
     const user: User | null = await prisma.user.findFirst({ where: { email } });
-    if (!user) return next(new AppError("User not found", 404));
+    if (!user)
+      return next(
+        new AppError("User not registered. Sign up with google first", 404)
+      );
 
     const token = generateToken(user.id);
     const { password: _password, ...userWithoutPassword } = user;
@@ -232,9 +235,6 @@ export const resetPassword = handleAsync(
     const user: User | null = await prisma.user.findFirst({
       where: { id: existingToken?.userId },
     });
-
-    console.log("User ID:", user);
-    console.log("Existing Token:", existingToken);
 
     const passwordHash = CryptoJS.AES.encrypt(
       newPassword,

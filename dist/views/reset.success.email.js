@@ -189,7 +189,7 @@ const resetSuccess = ({ username, browser, OS }) => {
                       margin: 0 0 0;
                     "
                   >
-                    &copy; <strong>BytesBlog Inc</strong>
+                  <strong> &copy; ${new Date().getFullYear()}. BytesBlog Inc</strong>
                   </p>
                 </td>
               </tr>
