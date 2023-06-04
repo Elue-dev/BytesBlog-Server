@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { NextFunction, Response } from "express";
 import prisma from "../db/prisma.client";
 import handleAsync from "../helpers/async.handler";
@@ -6,7 +7,7 @@ import { AuthenticatedRequest } from "../models/types/auth";
 
 export const addPost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const { title, content, image, readTime, authorId } = req.body;
+    const { title, content, image, readTime, categories } = req.body;
 
     let missingFields = [];
     let bodyObject = { title, content, image, readTime };
@@ -31,6 +32,7 @@ export const addPost = handleAsync(
         content,
         image,
         readTime,
+        categories,
         authorId: req.user?.id!,
       },
     });
@@ -54,6 +56,10 @@ export const getPosts = handleAsync(
             lastName: true,
           },
         },
+        likes: true,
+      },
+      orderBy: {
+        createdAt: Prisma.SortOrder.desc,
       },
     });
 
@@ -80,7 +86,18 @@ export const getSinglePost = handleAsync(
           },
         },
         bookmarks: true,
-        comments: true,
+        comments: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                avatar: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
         likes: true,
       },
     });
@@ -94,7 +111,7 @@ export const getSinglePost = handleAsync(
 
 export const updatePost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const { title, content, image, readTime } = req.body;
+    const { title, content, image, readTime, categories } = req.body;
 
     if (!title && !content && !image && !readTime)
       return next(
@@ -120,6 +137,7 @@ export const updatePost = handleAsync(
         title: title || post.title,
         content: content || post.content,
         image: image || post.image,
+        categories: categories || post.categories,
         readTime: readTime || post.readTime,
       },
     });

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const post_controller_1 = require("../controllers/post.controller");
+const comment_controller_1 = require("../controllers/comment.controller");
 const auth_middleware_1 = require("../middleware/auth.middleware");
 const router = (0, express_1.Router)();
-router.route("/").post(auth_middleware_1.verifyAuth, post_controller_1.addPost);
+router.route("/").get(comment_controller_1.getComments).post(auth_middleware_1.verifyAuth, comment_controller_1.addComment);
 exports.default = router;

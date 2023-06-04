@@ -16,6 +16,7 @@ model User {
    password String
    interests String[]
    bio String @db.VarChar(200)
+   withGoogle Boolean @default(false)
    comments Comment[]
    posts Post[]
    likes Like[]
@@ -31,9 +32,11 @@ model Post {
   image String
   title String
   content String
+  slug String @default("")
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   readTime Int
+  categories String[]
   author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId   String
   comments Comment[]

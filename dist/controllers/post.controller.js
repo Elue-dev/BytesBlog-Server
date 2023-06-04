@@ -13,12 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updatePost = exports.getSinglePost = exports.getPosts = exports.addPost = void 0;
+const client_1 = require("@prisma/client");
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
 exports.addPost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const { title, content, image, readTime, authorId } = req.body;
+    const { title, content, image, readTime, categories } = req.body;
     let missingFields = [];
     let bodyObject = { title, content, image, readTime };
     for (let field in bodyObject) {
@@ -33,6 +34,7 @@ exports.addPost = (0, async_handler_1.default)((req, res, next) => __awaiter(voi
             content,
             image,
             readTime,
+            categories,
             authorId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.id,
         },
     });
@@ -52,6 +54,10 @@ exports.getPosts = (0, async_handler_1.default)((req, res, next) => __awaiter(vo
                     lastName: true,
                 },
             },
+            likes: true,
+        },
+        orderBy: {
+            createdAt: client_1.Prisma.SortOrder.desc,
         },
     });
     res.status(200).json({
@@ -74,7 +80,18 @@ exports.getSinglePost = (0, async_handler_1.default)((req, res, next) => __await
                 },
             },
             bookmarks: true,
-            comments: true,
+            comments: {
+                include: {
+                    author: {
+                        select: {
+                            id: true,
+                            avatar: true,
+                            firstName: true,
+                            lastName: true,
+                        },
+                    },
+                },
+            },
             likes: true,
         },
     });
@@ -84,7 +101,7 @@ exports.getSinglePost = (0, async_handler_1.default)((req, res, next) => __await
     });
 }));
 exports.updatePost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, content, image, readTime } = req.body;
+    const { title, content, image, readTime, categories } = req.body;
     if (!title && !content && !image && !readTime)
         return next(new global_error_1.AppError("Please provide at least one detail you want to update", 400));
     const post = yield prisma_client_1.default.post.findFirst({
@@ -102,6 +119,7 @@ exports.updatePost = (0, async_handler_1.default)((req, res, next) => __awaiter(
             title: title || post.title,
             content: content || post.content,
             image: image || post.image,
+            categories: categories || post.categories,
             readTime: readTime || post.readTime,
         },
     });
