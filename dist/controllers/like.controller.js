@@ -12,13 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.likePost = void 0;
+exports.likeDislikePost = void 0;
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
-exports.likePost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.likeDislikePost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
-    const { postId } = req.body;
+    const { postId } = req.params;
+    console.log(postId);
     if (!postId)
         return next(new global_error_1.AppError("Please provide the id of the post", 400));
     const postToLike = yield prisma_client_1.default.post.findFirst({

@@ -17,7 +17,8 @@ const client_1 = require("@prisma/client");
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
-const authorFields = {
+const slugify_1 = require("../helpers/slugify");
+const AUTHOR_FIELDS = {
     id: true,
     avatar: true,
     firstName: true,
@@ -41,6 +42,7 @@ exports.addPost = (0, async_handler_1.default)((req, res, next) => __awaiter(voi
             image,
             readTime,
             categories,
+            slug: (0, slugify_1.slugify)(title),
             authorId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.id,
         },
     });
@@ -53,7 +55,7 @@ exports.getPosts = (0, async_handler_1.default)((req, res, next) => __awaiter(vo
     const posts = yield prisma_client_1.default.post.findMany({
         include: {
             author: {
-                select: authorFields,
+                select: AUTHOR_FIELDS,
             },
             likes: true,
         },
@@ -73,20 +75,20 @@ exports.getSinglePost = (0, async_handler_1.default)((req, res, next) => __await
         },
         include: {
             author: {
-                select: authorFields,
+                select: AUTHOR_FIELDS,
             },
             bookmarks: true,
             comments: {
                 include: {
                     author: {
-                        select: authorFields,
+                        select: AUTHOR_FIELDS,
                     },
                 },
             },
             likes: {
                 include: {
                     user: {
-                        select: authorFields,
+                        select: AUTHOR_FIELDS,
                     },
                 },
             },

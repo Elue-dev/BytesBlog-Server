@@ -53,7 +53,7 @@ app.use("/api/v1/auth", auth_routes_1.default);
 app.use("/api/v1/users", user_routes_1.default);
 app.use("/api/v1/posts", post_routes_1.default);
 app.use("/api/v1/comments", comment_routes_1.default);
-app.use("/api/v1/likes", like_routes_1.default);
+app.use("/api/v1/likeDislike", like_routes_1.default);
 app.all("*", (req, res, next) => {
     next(new global_error_1.AppError(`Can't find ${req.originalUrl} with method ${req.method} on this server`, 404));
 });

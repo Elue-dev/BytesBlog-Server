@@ -3,9 +3,10 @@ import { NextFunction, Response } from "express";
 import prisma from "../db/prisma.client";
 import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
+import { slugify } from "../helpers/slugify";
 import { AuthenticatedRequest } from "../models/types/auth";
 
-const authorFields = {
+const AUTHOR_FIELDS = {
   id: true,
   avatar: true,
   firstName: true,
@@ -40,6 +41,7 @@ export const addPost = handleAsync(
         image,
         readTime,
         categories,
+        slug: slugify(title),
         authorId: req.user?.id!,
       },
     });
@@ -56,7 +58,7 @@ export const getPosts = handleAsync(
     const posts = await prisma.post.findMany({
       include: {
         author: {
-          select: authorFields,
+          select: AUTHOR_FIELDS,
         },
         likes: true,
       },
@@ -80,20 +82,20 @@ export const getSinglePost = handleAsync(
       },
       include: {
         author: {
-          select: authorFields,
+          select: AUTHOR_FIELDS,
         },
         bookmarks: true,
         comments: {
           include: {
             author: {
-              select: authorFields,
+              select: AUTHOR_FIELDS,
             },
           },
         },
         likes: {
           include: {
             user: {
-              select: authorFields,
+              select: AUTHOR_FIELDS,
             },
           },
         },

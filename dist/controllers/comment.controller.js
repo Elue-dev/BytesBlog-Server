@@ -16,7 +16,7 @@ exports.addComment = exports.getPostComments = exports.getCommentsById = exports
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
-const authorFields = {
+const AUTHOR_FIELDS = {
     id: true,
     avatar: true,
     firstName: true,
@@ -26,12 +26,12 @@ exports.getComments = (0, async_handler_1.default)((req, res, next) => __awaiter
     const comments = yield prisma_client_1.default.comment.findMany({
         include: {
             author: {
-                select: authorFields,
+                select: AUTHOR_FIELDS,
             },
             children: {
                 include: {
                     author: {
-                        select: authorFields,
+                        select: AUTHOR_FIELDS,
                     },
                 },
             },
@@ -49,17 +49,17 @@ exports.getCommentsById = (0, async_handler_1.default)((req, res, next) => __awa
         },
         include: {
             author: {
-                select: authorFields,
+                select: AUTHOR_FIELDS,
             },
             children: {
                 include: {
                     author: {
-                        select: authorFields,
+                        select: AUTHOR_FIELDS,
                     },
                     children: {
                         include: {
                             author: {
-                                select: authorFields,
+                                select: AUTHOR_FIELDS,
                             },
                         },
                     },
@@ -79,12 +79,12 @@ exports.getPostComments = (0, async_handler_1.default)((req, res, next) => __awa
         },
         include: {
             author: {
-                select: authorFields,
+                select: AUTHOR_FIELDS,
             },
             children: {
                 include: {
                     author: {
-                        select: authorFields,
+                        select: AUTHOR_FIELDS,
                     },
                 },
             },

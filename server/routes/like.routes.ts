@@ -1,10 +1,9 @@
 import { Router } from "express";
-import { likePost } from "../controllers/like.controller";
+import { likeDislikePost } from "../controllers/like.controller";
 import { verifyAuth } from "../middleware/auth.middleware";
 
 const router = Router();
 
-router.use(verifyAuth);
-router.post("/", likePost);
+router.post("/:postId", verifyAuth, likeDislikePost);
 
 export default router;

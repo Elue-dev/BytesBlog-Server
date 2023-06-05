@@ -5,9 +5,10 @@ import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
 import { AuthenticatedRequest } from "../models/types/auth";
 
-export const likePost = handleAsync(
+export const likeDislikePost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const { postId } = req.body;
+    const { postId } = req.params;
+    console.log(postId);
 
     if (!postId)
       return next(new AppError("Please provide the id of the post", 400));

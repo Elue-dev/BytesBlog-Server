@@ -4,7 +4,7 @@ import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
 import { AuthenticatedRequest } from "../models/types/auth";
 
-const authorFields = {
+const AUTHOR_FIELDS = {
   id: true,
   avatar: true,
   firstName: true,
@@ -16,12 +16,12 @@ export const getComments = handleAsync(
     const comments = await prisma.comment.findMany({
       include: {
         author: {
-          select: authorFields,
+          select: AUTHOR_FIELDS,
         },
         children: {
           include: {
             author: {
-              select: authorFields,
+              select: AUTHOR_FIELDS,
             },
           },
         },
@@ -43,17 +43,17 @@ export const getCommentsById = handleAsync(
       },
       include: {
         author: {
-          select: authorFields,
+          select: AUTHOR_FIELDS,
         },
         children: {
           include: {
             author: {
-              select: authorFields,
+              select: AUTHOR_FIELDS,
             },
             children: {
               include: {
                 author: {
-                  select: authorFields,
+                  select: AUTHOR_FIELDS,
                 },
               },
             },
@@ -77,12 +77,12 @@ export const getPostComments = handleAsync(
       },
       include: {
         author: {
-          select: authorFields,
+          select: AUTHOR_FIELDS,
         },
         children: {
           include: {
             author: {
-              select: authorFields,
+              select: AUTHOR_FIELDS,
             },
           },
         },
