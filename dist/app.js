@@ -34,7 +34,8 @@ const error_1 = __importDefault(require("./helpers/error"));
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const post_routes_1 = __importDefault(require("./routes/post.routes"));
-const comment_route_1 = __importDefault(require("./routes/comment.route"));
+const comment_routes_1 = __importDefault(require("./routes/comment.routes"));
+const like_routes_1 = __importDefault(require("./routes/like.routes"));
 const app = (0, express_1.default)();
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Credentials", "true");
@@ -51,7 +52,8 @@ app.use((req, res, next) => {
 app.use("/api/v1/auth", auth_routes_1.default);
 app.use("/api/v1/users", user_routes_1.default);
 app.use("/api/v1/posts", post_routes_1.default);
-app.use("/api/v1/comments", comment_route_1.default);
+app.use("/api/v1/comments", comment_routes_1.default);
+app.use("/api/v1/likes", like_routes_1.default);
 app.all("*", (req, res, next) => {
     next(new global_error_1.AppError(`Can't find ${req.originalUrl} with method ${req.method} on this server`, 404));
 });

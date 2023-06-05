@@ -5,6 +5,13 @@ import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
 import { AuthenticatedRequest } from "../models/types/auth";
 
+const authorFields = {
+  id: true,
+  avatar: true,
+  firstName: true,
+  lastName: true,
+};
+
 export const addPost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { title, content, image, readTime, categories } = req.body;
@@ -49,12 +56,7 @@ export const getPosts = handleAsync(
     const posts = await prisma.post.findMany({
       include: {
         author: {
-          select: {
-            id: true,
-            avatar: true,
-            firstName: true,
-            lastName: true,
-          },
+          select: authorFields,
         },
         likes: true,
       },
@@ -78,27 +80,23 @@ export const getSinglePost = handleAsync(
       },
       include: {
         author: {
-          select: {
-            id: true,
-            avatar: true,
-            firstName: true,
-            lastName: true,
-          },
+          select: authorFields,
         },
         bookmarks: true,
         comments: {
           include: {
             author: {
-              select: {
-                id: true,
-                avatar: true,
-                firstName: true,
-                lastName: true,
-              },
+              select: authorFields,
             },
           },
         },
-        likes: true,
+        likes: {
+          include: {
+            user: {
+              select: authorFields,
+            },
+          },
+        },
       },
     });
 

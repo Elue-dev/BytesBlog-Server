@@ -17,6 +17,12 @@ const client_1 = require("@prisma/client");
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
+const authorFields = {
+    id: true,
+    avatar: true,
+    firstName: true,
+    lastName: true,
+};
 exports.addPost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { title, content, image, readTime, categories } = req.body;
@@ -47,12 +53,7 @@ exports.getPosts = (0, async_handler_1.default)((req, res, next) => __awaiter(vo
     const posts = yield prisma_client_1.default.post.findMany({
         include: {
             author: {
-                select: {
-                    id: true,
-                    avatar: true,
-                    firstName: true,
-                    lastName: true,
-                },
+                select: authorFields,
             },
             likes: true,
         },
@@ -72,27 +73,23 @@ exports.getSinglePost = (0, async_handler_1.default)((req, res, next) => __await
         },
         include: {
             author: {
-                select: {
-                    id: true,
-                    avatar: true,
-                    firstName: true,
-                    lastName: true,
-                },
+                select: authorFields,
             },
             bookmarks: true,
             comments: {
                 include: {
                     author: {
-                        select: {
-                            id: true,
-                            avatar: true,
-                            firstName: true,
-                            lastName: true,
-                        },
+                        select: authorFields,
                     },
                 },
             },
-            likes: true,
+            likes: {
+                include: {
+                    user: {
+                        select: authorFields,
+                    },
+                },
+            },
         },
     });
     res.status(200).json({

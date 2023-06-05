@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { addComment, getComments } from "../controllers/comment.controller";
+import { likePost } from "../controllers/like.controller";
 import { verifyAuth } from "../middleware/auth.middleware";
 
 const router = Router();
 
-router.route("/").get(getComments).post(verifyAuth, addComment);
+router.use(verifyAuth);
+router.post("/", likePost);
 
 export default router;

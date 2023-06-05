@@ -12,12 +12,84 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addComment = exports.getComments = void 0;
+exports.addComment = exports.getPostComments = exports.getCommentsById = exports.getComments = void 0;
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
+const authorFields = {
+    id: true,
+    avatar: true,
+    firstName: true,
+    lastName: true,
+};
 exports.getComments = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const comments = yield prisma_client_1.default.comment.findMany();
+    const comments = yield prisma_client_1.default.comment.findMany({
+        include: {
+            author: {
+                select: authorFields,
+            },
+            children: {
+                include: {
+                    author: {
+                        select: authorFields,
+                    },
+                },
+            },
+        },
+    });
+    res.status(200).json({
+        status: "success",
+        comments,
+    });
+}));
+exports.getCommentsById = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const comments = yield prisma_client_1.default.comment.findMany({
+        where: {
+            id: req.params.commentId,
+        },
+        include: {
+            author: {
+                select: authorFields,
+            },
+            children: {
+                include: {
+                    author: {
+                        select: authorFields,
+                    },
+                    children: {
+                        include: {
+                            author: {
+                                select: authorFields,
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    });
+    res.status(200).json({
+        status: "success",
+        comments,
+    });
+}));
+exports.getPostComments = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const comments = yield prisma_client_1.default.comment.findMany({
+        where: {
+            postId: req.params.postId,
+        },
+        include: {
+            author: {
+                select: authorFields,
+            },
+            children: {
+                include: {
+                    author: {
+                        select: authorFields,
+                    },
+                },
+            },
+        },
+    });
     res.status(200).json({
         status: "success",
         comments,
@@ -25,7 +97,7 @@ exports.getComments = (0, async_handler_1.default)((req, res, next) => __awaiter
 }));
 exports.addComment = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const { message, authorId, parentId, postId } = req.body;
+    const { message, parentId, postId } = req.body;
     let missingFields = [];
     let bodyObject = { message, postId };
     for (let field in bodyObject) {

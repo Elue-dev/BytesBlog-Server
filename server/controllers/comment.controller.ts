@@ -4,9 +4,91 @@ import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
 import { AuthenticatedRequest } from "../models/types/auth";
 
+const authorFields = {
+  id: true,
+  avatar: true,
+  firstName: true,
+  lastName: true,
+};
+
 export const getComments = handleAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const comments = await prisma.comment.findMany();
+    const comments = await prisma.comment.findMany({
+      include: {
+        author: {
+          select: authorFields,
+        },
+        children: {
+          include: {
+            author: {
+              select: authorFields,
+            },
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      status: "success",
+      comments,
+    });
+  }
+);
+
+export const getCommentsById = handleAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const comments = await prisma.comment.findMany({
+      where: {
+        id: req.params.commentId,
+      },
+      include: {
+        author: {
+          select: authorFields,
+        },
+        children: {
+          include: {
+            author: {
+              select: authorFields,
+            },
+            children: {
+              include: {
+                author: {
+                  select: authorFields,
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      status: "success",
+      comments,
+    });
+  }
+);
+
+export const getPostComments = handleAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const comments = await prisma.comment.findMany({
+      where: {
+        postId: req.params.postId,
+      },
+      include: {
+        author: {
+          select: authorFields,
+        },
+        children: {
+          include: {
+            author: {
+              select: authorFields,
+            },
+          },
+        },
+      },
+    });
+
     res.status(200).json({
       status: "success",
       comments,
@@ -16,7 +98,7 @@ export const getComments = handleAsync(
 
 export const addComment = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const { message, authorId, parentId, postId } = req.body;
+    const { message, parentId, postId } = req.body;
 
     let missingFields = [];
     let bodyObject = { message, postId };

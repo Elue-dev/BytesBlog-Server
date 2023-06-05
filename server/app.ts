@@ -6,7 +6,8 @@ import errorHandler from "./helpers/error";
 import userRouter from "./routes/user.routes";
 import authRouter from "./routes/auth.routes";
 import postRouter from "./routes/post.routes";
-import commentRouter from "./routes/comment.route";
+import commentRouter from "./routes/comment.routes";
+import likeRouter from "./routes/like.routes";
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/posts", postRouter);
 app.use("/api/v1/comments", commentRouter);
+app.use("/api/v1/likes", likeRouter);
 
 app.all("*", (req, res, next) => {
   next(
