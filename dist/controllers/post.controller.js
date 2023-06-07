@@ -77,7 +77,13 @@ exports.getSinglePost = (0, async_handler_1.default)((req, res, next) => __await
             author: {
                 select: AUTHOR_FIELDS,
             },
-            bookmarks: true,
+            bookmarks: {
+                include: {
+                    user: {
+                        select: AUTHOR_FIELDS,
+                    },
+                },
+            },
             comments: {
                 include: {
                     author: {
@@ -116,6 +122,7 @@ exports.updatePost = (0, async_handler_1.default)((req, res, next) => __awaiter(
         },
         data: {
             title: title || post.title,
+            slug: title ? (0, slugify_1.slugify)(title) : post.slug,
             content: content || post.content,
             image: image || post.image,
             categories: categories || post.categories,

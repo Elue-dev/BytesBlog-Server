@@ -12,28 +12,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.likeDislikePost = void 0;
+exports.addRemoveBookmark = void 0;
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
-exports.likeDislikePost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.addRemoveBookmark = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     const { postId } = req.params;
     if (!postId)
         return next(new global_error_1.AppError("Please provide the id of the post", 400));
-    const postToLike = yield prisma_client_1.default.post.findFirst({
+    const postToBookmark = yield prisma_client_1.default.post.findFirst({
         where: {
             id: postId,
         },
         include: {
-            likes: true,
+            bookmarks: true,
         },
     });
-    if (!postToLike)
+    if (!postToBookmark)
         return next(new global_error_1.AppError("Post could not be found", 400));
-    const userHasLiked = (_a = postToLike === null || postToLike === void 0 ? void 0 : postToLike.likes) === null || _a === void 0 ? void 0 : _a.find((like) => { var _a; return like.userId === ((_a = req.user) === null || _a === void 0 ? void 0 : _a.id); });
-    if (userHasLiked) {
-        yield prisma_client_1.default.like.deleteMany({
+    const userHasBookmarked = (_a = postToBookmark === null || postToBookmark === void 0 ? void 0 : postToBookmark.bookmarks) === null || _a === void 0 ? void 0 : _a.find((bookmark) => { var _a; return bookmark.userId === ((_a = req.user) === null || _a === void 0 ? void 0 : _a.id); });
+    if (userHasBookmarked) {
+        yield prisma_client_1.default.bookmark.deleteMany({
             where: {
                 userId: (_b = req.user) === null || _b === void 0 ? void 0 : _b.id,
                 postId,
@@ -41,9 +41,8 @@ exports.likeDislikePost = (0, async_handler_1.default)((req, res, next) => __awa
         });
     }
     else {
-        yield prisma_client_1.default.like.create({
+        yield prisma_client_1.default.bookmark.create({
             data: {
-                type: "post",
                 userId: (_c = req.user) === null || _c === void 0 ? void 0 : _c.id,
                 postId,
             },
@@ -51,6 +50,8 @@ exports.likeDislikePost = (0, async_handler_1.default)((req, res, next) => __awa
     }
     res.status(200).json({
         status: "success",
-        message: userHasLiked ? "Post Unliked" : "Post liked",
+        message: userHasBookmarked
+            ? "Post removed from bookmarks"
+            : "Post added to bookmarks",
     });
 }));

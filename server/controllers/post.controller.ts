@@ -84,7 +84,13 @@ export const getSinglePost = handleAsync(
         author: {
           select: AUTHOR_FIELDS,
         },
-        bookmarks: true,
+        bookmarks: {
+          include: {
+            user: {
+              select: AUTHOR_FIELDS,
+            },
+          },
+        },
         comments: {
           include: {
             author: {
@@ -135,6 +141,7 @@ export const updatePost = handleAsync(
       },
       data: {
         title: title || post.title,
+        slug: title ? slugify(title) : post.slug,
         content: content || post.content,
         image: image || post.image,
         categories: categories || post.categories,
