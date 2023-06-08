@@ -61,6 +61,7 @@ export const getPosts = handleAsync(
           select: AUTHOR_FIELDS,
         },
         likes: true,
+        bookmarks: true,
       },
       orderBy: {
         createdAt: Prisma.SortOrder.desc,
