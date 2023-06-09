@@ -48,6 +48,13 @@ export const signup = handleAsync(
       );
 
     const userExists = await prisma.user.findFirst({ where: { email } });
+    if (userExists && userExists.withGoogle)
+      return next(
+        new AppError(
+          "Account has been signed up with google, sign in instead",
+          400
+        )
+      );
     if (userExists) return next(new AppError("Email already in use", 400));
 
     const passwordHash = CryptoJS.AES.encrypt(

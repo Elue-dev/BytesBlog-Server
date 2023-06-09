@@ -52,6 +52,8 @@ exports.signup = (0, async_handler_1.default)((req, res, next) => __awaiter(void
     if (missingFields.length > 0)
         return next(new global_error_1.AppError(`user ${missingFields.join(", ")} ${missingFields.length > 1 ? "are" : "is"} required`, 400));
     const userExists = yield prisma_client_1.default.user.findFirst({ where: { email } });
+    if (userExists && userExists.withGoogle)
+        return next(new global_error_1.AppError("Account has been signed up with google, sign in instead", 400));
     if (userExists)
         return next(new global_error_1.AppError("Email already in use", 400));
     const passwordHash = crypto_js_1.default.AES.encrypt(password, process.env.SECRET_KEY).toString();
