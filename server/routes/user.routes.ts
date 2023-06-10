@@ -9,6 +9,7 @@ import { verifyAuth } from "../middleware/auth.middleware";
 const router = Router();
 
 router.route("/").get(getUsers).put(verifyAuth, updateUser);
+
 router.route("/:userId").get(getSingleUser);
 
 export default router;

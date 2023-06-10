@@ -13,14 +13,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addComment = exports.getPostComments = exports.getCommentsById = exports.getComments = void 0;
+const client_1 = require("@prisma/client");
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
+const email_service_1 = __importDefault(require("../services/email.service"));
+const comment_email_1 = require("../views/comment.email");
+const reply_email_1 = require("../views/reply.email");
 const AUTHOR_FIELDS = {
     id: true,
     avatar: true,
     firstName: true,
     lastName: true,
+    email: true,
 };
 exports.getComments = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const comments = yield prisma_client_1.default.comment.findMany({
@@ -35,6 +40,9 @@ exports.getComments = (0, async_handler_1.default)((req, res, next) => __awaiter
                     },
                 },
             },
+        },
+        orderBy: {
+            createdAt: client_1.Prisma.SortOrder.desc,
         },
     });
     res.status(200).json({
@@ -66,6 +74,9 @@ exports.getCommentsById = (0, async_handler_1.default)((req, res, next) => __awa
                 },
             },
         },
+        orderBy: {
+            createdAt: client_1.Prisma.SortOrder.desc,
+        },
     });
     res.status(200).json({
         status: "success",
@@ -88,6 +99,18 @@ exports.getPostComments = (0, async_handler_1.default)((req, res, next) => __awa
                     },
                 },
             },
+            post: {
+                include: {
+                    author: {
+                        select: {
+                            email: true,
+                        },
+                    },
+                },
+            },
+        },
+        orderBy: {
+            createdAt: client_1.Prisma.SortOrder.desc,
         },
     });
     res.status(200).json({
@@ -97,9 +120,9 @@ exports.getPostComments = (0, async_handler_1.default)((req, res, next) => __awa
 }));
 exports.addComment = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const { message, parentId, postId } = req.body;
+    const { message, parentId, postId, authorEmail, path, isReplying } = req.body;
     let missingFields = [];
-    let bodyObject = { message, postId };
+    let bodyObject = { message, postId, authorEmail, path };
     for (let field in bodyObject) {
         if (!req.body[field])
             missingFields.push(field);
@@ -114,8 +137,46 @@ exports.addComment = (0, async_handler_1.default)((req, res, next) => __awaiter(
             postId,
         },
     });
-    res.status(200).json({
-        status: "success",
-        comment,
+    const commentAuthor = yield prisma_client_1.default.user.findFirst({
+        where: {
+            email: authorEmail,
+        },
     });
+    const post = yield prisma_client_1.default.post.findFirst({
+        where: {
+            id: postId,
+        },
+        include: {
+            author: {
+                select: AUTHOR_FIELDS,
+            },
+        },
+    });
+    const replySubject = `New Reply on your comment`;
+    const reply_send_to = authorEmail;
+    const commentSubject = `New Comment on your post`;
+    const comment_send_to = authorEmail;
+    const sent_from = process.env.EMAIL_USER;
+    const reply_to = process.env.REPLY_TO;
+    const replyBody = (0, reply_email_1.emailReply)(post === null || post === void 0 ? void 0 : post.author.firstName, path);
+    const commentBody = (0, comment_email_1.commentEmail)(commentAuthor === null || commentAuthor === void 0 ? void 0 : commentAuthor.firstName, path, message);
+    try {
+        (0, email_service_1.default)({
+            subject: isReplying ? replySubject : commentSubject,
+            body: isReplying ? replyBody : commentBody,
+            send_to: isReplying ? reply_send_to : comment_send_to,
+            sent_from,
+            reply_to,
+        });
+        res.status(200).json({
+            status: "success",
+            comment,
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            status: "fail",
+            message: `Something went wrong. Please try again.`,
+        });
+    }
 }));

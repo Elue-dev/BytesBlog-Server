@@ -5,17 +5,12 @@ import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
 import { slugify } from "../helpers/slugify";
 import { AuthenticatedRequest } from "../models/types/auth";
-
-const AUTHOR_FIELDS = {
-  id: true,
-  avatar: true,
-  firstName: true,
-  lastName: true,
-};
+import { AUTHOR_FIELDS } from "../utils/author.fields";
 
 export const addPost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { title, content, image, readTime, categories } = req.body;
+    console.log(categories);
 
     let missingFields = [];
     let bodyObject = { title, content, image, readTime };
@@ -130,7 +125,7 @@ export const updatePost = handleAsync(
 
     const post = await prisma.post.findFirst({
       where: {
-        id: req.params.postId,
+        slug: req.params.slug,
       },
     });
 
@@ -138,7 +133,7 @@ export const updatePost = handleAsync(
 
     const updatedPost = await prisma.post.update({
       where: {
-        id: req.params.postId,
+        id: post.id,
       },
       data: {
         title: title || post.title,

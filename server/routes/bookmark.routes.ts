@@ -1,9 +1,13 @@
 import { Router } from "express";
-import { addRemoveBookmark } from "../controllers/bookmark.controller";
+import {
+  addRemoveBookmark,
+  getBookmarks,
+} from "../controllers/bookmark.controller";
 import { verifyAuth } from "../middleware/auth.middleware";
 
 const router = Router();
 
-router.route("/:postId").post(verifyAuth, addRemoveBookmark);
+router.get("/", verifyAuth, getBookmarks);
+router.post("/addRemoveBookmark/:postId", verifyAuth, addRemoveBookmark);
 
 export default router;

@@ -18,15 +18,11 @@ const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
 const slugify_1 = require("../helpers/slugify");
-const AUTHOR_FIELDS = {
-    id: true,
-    avatar: true,
-    firstName: true,
-    lastName: true,
-};
+const author_fields_1 = require("../utils/author.fields");
 exports.addPost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { title, content, image, readTime, categories } = req.body;
+    console.log(categories);
     let missingFields = [];
     let bodyObject = { title, content, image, readTime };
     for (let field in bodyObject) {
@@ -55,7 +51,7 @@ exports.getPosts = (0, async_handler_1.default)((req, res, next) => __awaiter(vo
     const posts = yield prisma_client_1.default.post.findMany({
         include: {
             author: {
-                select: AUTHOR_FIELDS,
+                select: author_fields_1.AUTHOR_FIELDS,
             },
             likes: true,
             bookmarks: true,
@@ -76,26 +72,26 @@ exports.getSinglePost = (0, async_handler_1.default)((req, res, next) => __await
         },
         include: {
             author: {
-                select: AUTHOR_FIELDS,
+                select: author_fields_1.AUTHOR_FIELDS,
             },
             bookmarks: {
                 include: {
                     user: {
-                        select: AUTHOR_FIELDS,
+                        select: author_fields_1.AUTHOR_FIELDS,
                     },
                 },
             },
             comments: {
                 include: {
                     author: {
-                        select: AUTHOR_FIELDS,
+                        select: author_fields_1.AUTHOR_FIELDS,
                     },
                 },
             },
             likes: {
                 include: {
                     user: {
-                        select: AUTHOR_FIELDS,
+                        select: author_fields_1.AUTHOR_FIELDS,
                     },
                 },
             },
@@ -112,14 +108,14 @@ exports.updatePost = (0, async_handler_1.default)((req, res, next) => __awaiter(
         return next(new global_error_1.AppError("Please provide at least one detail you want to update", 400));
     const post = yield prisma_client_1.default.post.findFirst({
         where: {
-            id: req.params.postId,
+            slug: req.params.slug,
         },
     });
     if (!post)
         return next(new global_error_1.AppError("Post could not be found", 404));
     const updatedPost = yield prisma_client_1.default.post.update({
         where: {
-            id: req.params.postId,
+            id: post.id,
         },
         data: {
             title: title || post.title,

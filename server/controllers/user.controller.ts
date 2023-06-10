@@ -5,10 +5,11 @@ import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
 import { generateToken } from "../lib/generate.token";
 import { AuthenticatedRequest } from "../models/types/auth";
+import { AUTHOR_FIELDS } from "../utils/author.fields";
 
 export const getUsers = handleAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({});
     res.status(200).json({
       status: "success",
       users,
@@ -21,6 +22,9 @@ export const getSingleUser = handleAsync(
     const user = await prisma.user.findFirst({
       where: {
         id: req.params.id,
+      },
+      include: {
+        posts: true,
       },
     });
     if (!user) return next(new AppError("User could not be found", 404));

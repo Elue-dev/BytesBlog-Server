@@ -4,6 +4,7 @@ import prisma from "../db/prisma.client";
 import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
 import { AuthenticatedRequest } from "../models/types/auth";
+import { AUTHOR_FIELDS } from "../utils/author.fields";
 
 export const addRemoveBookmark = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -49,6 +50,29 @@ export const addRemoveBookmark = handleAsync(
       message: userHasBookmarked
         ? "Post removed from bookmarks"
         : "Post added to bookmarks",
+    });
+  }
+);
+
+export const getBookmarks = handleAsync(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    console.log("user", req.user);
+
+    const userBookmarks = await prisma.bookmark.findMany({
+      include: {
+        post: {
+          include: {
+            author: {
+              select: AUTHOR_FIELDS,
+            },
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      status: "success",
+      bookmarks: userBookmarks,
     });
   }
 );

@@ -29,7 +29,7 @@ const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
 const generate_token_1 = require("../lib/generate.token");
 exports.getUsers = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield prisma_client_1.default.user.findMany();
+    const users = yield prisma_client_1.default.user.findMany({});
     res.status(200).json({
         status: "success",
         users,
@@ -39,6 +39,9 @@ exports.getSingleUser = (0, async_handler_1.default)((req, res, next) => __await
     const user = yield prisma_client_1.default.user.findFirst({
         where: {
             id: req.params.id,
+        },
+        include: {
+            posts: true,
         },
     });
     if (!user)
