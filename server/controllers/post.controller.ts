@@ -79,7 +79,7 @@ export const getSinglePost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const post = await prisma.post.findMany({
       where: {
-        id: req.params.postId,
+        slug: req.params.slug,
       },
       include: {
         author: {

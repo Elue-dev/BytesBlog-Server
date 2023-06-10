@@ -55,6 +55,7 @@ export const signup = handleAsync(
           400
         )
       );
+
     if (userExists) return next(new AppError("Email already in use", 400));
 
     const passwordHash = CryptoJS.AES.encrypt(
