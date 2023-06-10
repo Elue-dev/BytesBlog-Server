@@ -112,7 +112,7 @@ const emailReply = (firstName, url, message) => {
                               >
                                Hi ${firstName}, You have a new reply on your comment
                                <br><br>
-                               <aside style='font-style: italic; text-align: center;'>'${message}'</aside>
+                               <aside style='font-style: italic; text-align: center; font-size: 1.2rem;'>'${message}'</aside>
                               </p>
                               <br />
                               <p

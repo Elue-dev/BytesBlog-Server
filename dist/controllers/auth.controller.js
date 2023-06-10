@@ -141,20 +141,27 @@ exports.forgotPassword = (0, async_handler_1.default)((req, res, next) => __awai
             expiresAt: new Date(Date.now() + 10 * 60 * 1000),
         },
     });
-    const resetUrl = `${process.env.CLIENT_URL}/auth/reset-password/${resetToken}`;
-    const subject = `Password Reset Request`;
+    const resetUrl = `${process.env.CLIENT_URL}/auth/reset-password/${resetToken}?withGoogle=${user.withGoogle}`;
+    const subject = user.withGoogle
+        ? "Password creation for your google account"
+        : "Password Reset Request";
     const send_to = email;
     const sent_from = process.env.EMAIL_USER;
     const reply_to = process.env.REPLY_TO;
     const body = (0, reset_email_1.passwordResetEmail)({
         username: user.firstName,
         url: resetUrl,
+        withGoogle: user.withGoogle,
     });
     try {
         (0, email_service_1.default)({ subject, body, send_to, sent_from, reply_to });
         res.status(200).json({
             status: "success",
-            message: `An email has been sent to ${email} with instructions
+            withGoogle: user.withGoogle,
+            message: user.withGoogle
+                ? `An email has been sent to ${email} with instructions
+        to create a password for your google account`
+                : `An email has been sent to ${email} with instructions
         to reset your password`,
         });
     }

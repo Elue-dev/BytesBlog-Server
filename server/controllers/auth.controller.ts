@@ -189,22 +189,29 @@ export const forgotPassword = handleAsync(
       },
     });
 
-    const resetUrl = `${process.env.CLIENT_URL}/auth/reset-password/${resetToken}`;
+    const resetUrl = `${process.env.CLIENT_URL}/auth/reset-password/${resetToken}?withGoogle=${user.withGoogle}`;
 
-    const subject = `Password Reset Request`;
+    const subject = user.withGoogle
+      ? "Password creation for your google account"
+      : "Password Reset Request";
     const send_to = email;
     const sent_from = process.env.EMAIL_USER as string;
     const reply_to = process.env.REPLY_TO as string;
     const body = passwordResetEmail({
       username: user.firstName,
       url: resetUrl,
+      withGoogle: user.withGoogle,
     });
 
     try {
       sendEmail({ subject, body, send_to, sent_from, reply_to });
       res.status(200).json({
         status: "success",
-        message: `An email has been sent to ${email} with instructions
+        withGoogle: user.withGoogle,
+        message: user.withGoogle
+          ? `An email has been sent to ${email} with instructions
+        to create a password for your google account`
+          : `An email has been sent to ${email} with instructions
         to reset your password`,
       });
     } catch (error) {

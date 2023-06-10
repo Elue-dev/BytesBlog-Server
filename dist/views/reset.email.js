@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.passwordResetEmail = void 0;
-const passwordResetEmail = ({ username, url }) => {
+const passwordResetEmail = ({ username, url, withGoogle, }) => {
     return `
             
   <!DOCTYPE html>
@@ -110,9 +110,10 @@ const passwordResetEmail = ({ username, url }) => {
                             margin: 0;
                           "
                         >
-                          This email was sent to you because you requested to
-                          reset your password. Click on the button below to
-                          create a new password.
+                        ${withGoogle
+        ? "This email was sent to create a password for your google account. Please click on the button below to proceed."
+        : "This email was sent to you because you requested to reset your password. Please click on the button below to create a new password."}
+                          
                         </p>
                         <br />
                         <p
@@ -140,7 +141,7 @@ const passwordResetEmail = ({ username, url }) => {
                             display: inline-block;
                             border-radius: 50px;
                           "
-                          >Reset Password</a
+                          >${withGoogle ? "Create Password" : "Reset Password"}</a
                         >
                         <br /><br />
                         <p
@@ -151,8 +152,8 @@ const passwordResetEmail = ({ username, url }) => {
                             margin: 0;
                           "
                         >
-                          If you didn't request a password reset, you can ignore
-                          this email. Your password will not be changed.
+                          If you didn't request a password ${withGoogle ? "creation" : "reset"}, you can ignore
+                          this email. ${!withGoogle && "Your password will not be changed."} 
                         </p>
 
                         <tr>

@@ -9,4 +9,5 @@ export interface User {
   bio: string;
   joinedAt: Date;
   lastUpdated: Date;
+  withGoogle: boolean;
 }
