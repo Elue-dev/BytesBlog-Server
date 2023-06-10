@@ -173,7 +173,7 @@ export const addComment = handleAsync(
     const comment_send_to = authorEmail;
     const sent_from = process.env.EMAIL_USER as string;
     const reply_to = process.env.REPLY_TO as string;
-    const replyBody = emailReply(post?.author.firstName!, path);
+    const replyBody = emailReply(post?.author.firstName!, path, message);
     const commentBody = commentEmail(commentAuthor?.firstName!, path, message);
 
     try {

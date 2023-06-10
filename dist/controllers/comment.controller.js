@@ -158,7 +158,7 @@ exports.addComment = (0, async_handler_1.default)((req, res, next) => __awaiter(
     const comment_send_to = authorEmail;
     const sent_from = process.env.EMAIL_USER;
     const reply_to = process.env.REPLY_TO;
-    const replyBody = (0, reply_email_1.emailReply)(post === null || post === void 0 ? void 0 : post.author.firstName, path);
+    const replyBody = (0, reply_email_1.emailReply)(post === null || post === void 0 ? void 0 : post.author.firstName, path, message);
     const commentBody = (0, comment_email_1.commentEmail)(commentAuthor === null || commentAuthor === void 0 ? void 0 : commentAuthor.firstName, path, message);
     try {
         (0, email_service_1.default)({

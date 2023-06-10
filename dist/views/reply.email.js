@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.emailReply = void 0;
-const emailReply = (firstName, url) => {
+const emailReply = (firstName, url, message) => {
     return `
                 
       <!DOCTYPE html>
@@ -111,6 +111,8 @@ const emailReply = (firstName, url) => {
                                 "
                               >
                                Hi ${firstName}, You have a new reply on your comment
+                               <br><br>
+                               <aside style='font-style: italic; text-align: center;'>'${message}'</aside>
                               </p>
                               <br />
                               <p

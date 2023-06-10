@@ -1,4 +1,4 @@
-export const emailReply = (firstName: string, url: string) => {
+export const emailReply = (firstName: string, url: string, message: string) => {
   return `
                 
       <!DOCTYPE html>
@@ -108,6 +108,8 @@ export const emailReply = (firstName: string, url: string) => {
                                 "
                               >
                                Hi ${firstName}, You have a new reply on your comment
+                               <br><br>
+                               <aside style='font-style: italic; text-align: center;'>'${message}'</aside>
                               </p>
                               <br />
                               <p
