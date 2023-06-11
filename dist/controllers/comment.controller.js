@@ -90,7 +90,16 @@ exports.getPostComments = (0, async_handler_1.default)((req, res, next) => __awa
         },
         include: {
             author: {
-                select: AUTHOR_FIELDS,
+                select: {
+                    id: true,
+                    avatar: true,
+                    firstName: true,
+                    lastName: true,
+                    bio: true,
+                    joinedAt: true,
+                    interests: true,
+                    posts: true,
+                },
             },
             children: {
                 include: {

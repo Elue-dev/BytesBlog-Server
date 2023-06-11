@@ -91,7 +91,16 @@ exports.getSinglePost = (0, async_handler_1.default)((req, res, next) => __await
             likes: {
                 include: {
                     user: {
-                        select: author_fields_1.AUTHOR_FIELDS,
+                        select: {
+                            id: true,
+                            avatar: true,
+                            firstName: true,
+                            lastName: true,
+                            bio: true,
+                            joinedAt: true,
+                            interests: true,
+                            posts: true,
+                        },
                     },
                 },
             },

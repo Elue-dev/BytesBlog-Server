@@ -3,7 +3,7 @@ import prisma from "../db/prisma.client";
 
 import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
-import { generateToken } from "../lib/generate.token";
+import { generateToken } from "../helpers/generate.token";
 import { AuthenticatedRequest } from "../models/types/auth";
 import { AUTHOR_FIELDS } from "../utils/author.fields";
 

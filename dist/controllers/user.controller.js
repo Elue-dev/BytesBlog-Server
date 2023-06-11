@@ -27,7 +27,7 @@ exports.updateUser = exports.getSingleUser = exports.getUsers = void 0;
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
-const generate_token_1 = require("../lib/generate.token");
+const generate_token_1 = require("../helpers/generate.token");
 exports.getUsers = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield prisma_client_1.default.user.findMany({});
     res.status(200).json({

@@ -97,7 +97,16 @@ export const getSinglePost = handleAsync(
         likes: {
           include: {
             user: {
-              select: AUTHOR_FIELDS,
+              select: {
+                id: true,
+                avatar: true,
+                firstName: true,
+                lastName: true,
+                bio: true,
+                joinedAt: true,
+                interests: true,
+                posts: true,
+              },
             },
           },
         },
