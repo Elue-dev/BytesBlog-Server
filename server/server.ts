@@ -18,13 +18,13 @@ let server: http.Server;
 prisma
   .$connect()
   .then(() => {
-    console.log("Postgres Database Connection Successful");
+    console.log("Database Connection Successful");
     server = app.listen(PORT, () =>
       console.log(`Server running on port ${PORT}`)
     );
   })
   .catch((error) => {
-    console.error("Failed to connect to Postgres Database:", error);
+    console.error("Failed to connect to Database:", error);
   });
 
 process.on("unhandledRejection", (err) => {

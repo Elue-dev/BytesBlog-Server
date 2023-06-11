@@ -17,11 +17,11 @@ let server;
 prisma_client_1.default
     .$connect()
     .then(() => {
-    console.log("Postgres Database Connection Successful");
+    console.log("Database Connection Successful");
     server = app_1.default.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 })
     .catch((error) => {
-    console.error("Failed to connect to Postgres Database:", error);
+    console.error("Failed to connect to Database:", error);
 });
 process.on("unhandledRejection", (err) => {
     console.log(err);
