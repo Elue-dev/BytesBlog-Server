@@ -193,7 +193,8 @@ exports.resetPassword = (0, async_handler_1.default)((req, res, next) => __await
     const user = yield prisma_client_1.default.user.findFirst({
         where: { id: existingToken === null || existingToken === void 0 ? void 0 : existingToken.userId },
     });
-    const passwordHash = CryptoJS.AES.encrypt(newPassword, process.env.SECRET_KEY).toString();
+    const salt = (0, bcryptjs_1.genSaltSync)(10);
+    const passwordHash = (0, bcryptjs_1.hashSync)(newPassword, salt);
     yield prisma_client_1.default.user.update({
         where: {
             id: user === null || user === void 0 ? void 0 : user.id,

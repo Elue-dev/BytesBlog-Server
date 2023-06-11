@@ -245,10 +245,8 @@ export const resetPassword = handleAsync(
       where: { id: existingToken?.userId },
     });
 
-    const passwordHash = CryptoJS.AES.encrypt(
-      newPassword,
-      process.env.SECRET_KEY as string
-    ).toString();
+    const salt = genSaltSync(10);
+    const passwordHash = hashSync(newPassword, salt);
 
     await prisma.user.update({
       where: {
