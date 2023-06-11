@@ -91,6 +91,7 @@ export const getPostComments = handleAsync(
           select: {
             id: true,
             avatar: true,
+            email: true,
             firstName: true,
             lastName: true,
             bio: true,

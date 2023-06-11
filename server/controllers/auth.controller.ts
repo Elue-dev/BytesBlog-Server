@@ -3,7 +3,6 @@ import prisma from "../db/prisma.client";
 import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
 import { LoginPayload, SignUpPayload } from "../models/types/auth";
-import CryptoJS from "crypto-js";
 import { User } from "../models/types/user";
 import { generateToken } from "../helpers/generate.token";
 import { welcome } from "../views/welcome.email";
@@ -12,6 +11,7 @@ import { createHash, randomBytes } from "crypto";
 import parser from "ua-parser-js";
 import { passwordResetEmail } from "../views/reset.email";
 import { resetSuccess } from "../views/reset.success.email";
+import { compare, compareSync, genSaltSync, hashSync } from "bcryptjs";
 
 export const signup = handleAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -58,10 +58,8 @@ export const signup = handleAsync(
 
     if (userExists) return next(new AppError("Email already in use", 400));
 
-    const passwordHash = CryptoJS.AES.encrypt(
-      password,
-      process.env.SECRET_KEY as string
-    ).toString();
+    const salt = genSaltSync(10);
+    const passwordHash = hashSync(password, salt);
 
     const newUser: User = await prisma.user.create({
       data: {
@@ -120,13 +118,9 @@ export const login = handleAsync(
     const user: User | null = await prisma.user.findFirst({ where: { email } });
     if (!user) return next(new AppError("Invalid credentials provided", 400));
 
-    const bytes = CryptoJS.AES.decrypt(
-      user.password,
-      process.env.SECRET_KEY as string
-    );
-    const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
+    const passwordIscorrect = await compare(password, user.password);
 
-    if (originalPassword !== password)
+    if (!passwordIscorrect)
       return next(new AppError("Invalid credentials provided", 400));
 
     const token = generateToken(user.id);

@@ -93,6 +93,7 @@ exports.getPostComments = (0, async_handler_1.default)((req, res, next) => __awa
                 select: {
                     id: true,
                     avatar: true,
+                    email: true,
                     firstName: true,
                     lastName: true,
                     bio: true,

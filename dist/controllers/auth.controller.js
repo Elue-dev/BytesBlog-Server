@@ -27,7 +27,6 @@ exports.resetPassword = exports.forgotPassword = exports.googleLogin = exports.l
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
-const crypto_js_1 = __importDefault(require("crypto-js"));
 const generate_token_1 = require("../helpers/generate.token");
 const welcome_email_1 = require("../views/welcome.email");
 const email_service_1 = __importDefault(require("../services/email.service"));
@@ -35,6 +34,7 @@ const crypto_1 = require("crypto");
 const ua_parser_js_1 = __importDefault(require("ua-parser-js"));
 const reset_email_1 = require("../views/reset.email");
 const reset_success_email_1 = require("../views/reset.success.email");
+const bcryptjs_1 = require("bcryptjs");
 exports.signup = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { firstname, lastname, email, password, interests, avatar, } = req.body;
     let missingFields = [];
@@ -56,7 +56,8 @@ exports.signup = (0, async_handler_1.default)((req, res, next) => __awaiter(void
         return next(new global_error_1.AppError("Account has been signed up with google, sign in instead", 400));
     if (userExists)
         return next(new global_error_1.AppError("Email already in use", 400));
-    const passwordHash = crypto_js_1.default.AES.encrypt(password, process.env.SECRET_KEY).toString();
+    const salt = (0, bcryptjs_1.genSaltSync)(10);
+    const passwordHash = (0, bcryptjs_1.hashSync)(password, salt);
     const newUser = yield prisma_client_1.default.user.create({
         data: {
             firstName: firstname,
@@ -100,9 +101,8 @@ exports.login = (0, async_handler_1.default)((req, res, next) => __awaiter(void 
     const user = yield prisma_client_1.default.user.findFirst({ where: { email } });
     if (!user)
         return next(new global_error_1.AppError("Invalid credentials provided", 400));
-    const bytes = crypto_js_1.default.AES.decrypt(user.password, process.env.SECRET_KEY);
-    const originalPassword = bytes.toString(crypto_js_1.default.enc.Utf8);
-    if (originalPassword !== password)
+    const passwordIscorrect = yield (0, bcryptjs_1.compare)(password, user.password);
+    if (!passwordIscorrect)
         return next(new global_error_1.AppError("Invalid credentials provided", 400));
     const token = (0, generate_token_1.generateToken)(user.id);
     const { password: _password } = user, userWithoutPassword = __rest(user, ["password"]);
@@ -193,7 +193,7 @@ exports.resetPassword = (0, async_handler_1.default)((req, res, next) => __await
     const user = yield prisma_client_1.default.user.findFirst({
         where: { id: existingToken === null || existingToken === void 0 ? void 0 : existingToken.userId },
     });
-    const passwordHash = crypto_js_1.default.AES.encrypt(newPassword, process.env.SECRET_KEY).toString();
+    const passwordHash = CryptoJS.AES.encrypt(newPassword, process.env.SECRET_KEY).toString();
     yield prisma_client_1.default.user.update({
         where: {
             id: user === null || user === void 0 ? void 0 : user.id,
