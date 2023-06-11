@@ -84,7 +84,7 @@ exports.getPosts = (0, async_handler_1.default)((req, res, next) => __awaiter(vo
 exports.getSinglePost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield prisma_client_1.default.post.findMany({
         where: {
-            slug: req.params.slug,
+            OR: [{ slug: req.params.slug }, { id: req.params.postId }],
         },
         include: {
             author: {
