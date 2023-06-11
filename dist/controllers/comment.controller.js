@@ -143,7 +143,7 @@ exports.addComment = (0, async_handler_1.default)((req, res, next) => __awaiter(
         data: {
             message,
             authorId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.id,
-            parentId,
+            parentId: parentId,
             postId,
         },
     });

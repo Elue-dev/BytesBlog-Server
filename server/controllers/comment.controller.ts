@@ -155,7 +155,7 @@ export const addComment = handleAsync(
       data: {
         message,
         authorId: req.user?.id!,
-        parentId,
+        parentId: parentId,
         postId,
       },
     });

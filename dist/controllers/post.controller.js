@@ -19,6 +19,16 @@ const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
 const slugify_1 = require("../helpers/slugify");
 const author_fields_1 = require("../utils/author.fields");
+const LIKE_FIELDS = {
+    id: true,
+    avatar: true,
+    firstName: true,
+    lastName: true,
+    bio: true,
+    joinedAt: true,
+    interests: true,
+    posts: true,
+};
 exports.addPost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { title, content, image, readTime, categories } = req.body;
@@ -53,7 +63,13 @@ exports.getPosts = (0, async_handler_1.default)((req, res, next) => __awaiter(vo
             author: {
                 select: author_fields_1.AUTHOR_FIELDS,
             },
-            likes: true,
+            likes: {
+                include: {
+                    user: {
+                        select: LIKE_FIELDS,
+                    },
+                },
+            },
             bookmarks: true,
         },
         orderBy: {

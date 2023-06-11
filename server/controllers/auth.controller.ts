@@ -11,7 +11,7 @@ import { createHash, randomBytes } from "crypto";
 import parser from "ua-parser-js";
 import { passwordResetEmail } from "../views/reset.email";
 import { resetSuccess } from "../views/reset.success.email";
-import { compare, compareSync, genSaltSync, hashSync } from "bcryptjs";
+import { compare, genSaltSync, hashSync } from "bcryptjs";
 
 export const signup = handleAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -22,6 +22,7 @@ export const signup = handleAsync(
       password,
       interests,
       avatar,
+      withGoogle,
     }: SignUpPayload = req.body;
 
     let missingFields = [];
@@ -70,6 +71,7 @@ export const signup = handleAsync(
         avatar: avatar || "",
         interests,
         bio: "",
+        withGoogle,
       },
     });
 

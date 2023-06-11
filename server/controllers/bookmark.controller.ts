@@ -56,8 +56,6 @@ export const addRemoveBookmark = handleAsync(
 
 export const getBookmarks = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    console.log("user", req.user);
-
     const userBookmarks = await prisma.bookmark.findMany({
       include: {
         post: {
@@ -73,6 +71,23 @@ export const getBookmarks = handleAsync(
     res.status(200).json({
       status: "success",
       bookmarks: userBookmarks,
+    });
+  }
+);
+
+export const removePostFromBookmarks = handleAsync(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const { bookmarkId } = req.params;
+
+    await prisma.bookmark.delete({
+      where: {
+        id: bookmarkId,
+      },
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Bookmark removed",
     });
   }
 );

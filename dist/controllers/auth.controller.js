@@ -36,7 +36,7 @@ const reset_email_1 = require("../views/reset.email");
 const reset_success_email_1 = require("../views/reset.success.email");
 const bcryptjs_1 = require("bcryptjs");
 exports.signup = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { firstname, lastname, email, password, interests, avatar, } = req.body;
+    const { firstname, lastname, email, password, interests, avatar, withGoogle, } = req.body;
     let missingFields = [];
     let bodyObject = {
         firstname,
@@ -67,6 +67,7 @@ exports.signup = (0, async_handler_1.default)((req, res, next) => __awaiter(void
             avatar: avatar || "",
             interests,
             bio: "",
+            withGoogle,
         },
     });
     const subject = `Welcome Onboard, ${newUser.firstName}!`;

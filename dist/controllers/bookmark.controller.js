@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBookmarks = exports.addRemoveBookmark = void 0;
+exports.removePostFromBookmarks = exports.getBookmarks = exports.addRemoveBookmark = void 0;
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
@@ -57,7 +57,6 @@ exports.addRemoveBookmark = (0, async_handler_1.default)((req, res, next) => __a
     });
 }));
 exports.getBookmarks = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("user", req.user);
     const userBookmarks = yield prisma_client_1.default.bookmark.findMany({
         include: {
             post: {
@@ -72,5 +71,17 @@ exports.getBookmarks = (0, async_handler_1.default)((req, res, next) => __awaite
     res.status(200).json({
         status: "success",
         bookmarks: userBookmarks,
+    });
+}));
+exports.removePostFromBookmarks = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { bookmarkId } = req.params;
+    yield prisma_client_1.default.bookmark.delete({
+        where: {
+            id: bookmarkId,
+        },
+    });
+    res.status(200).json({
+        status: "success",
+        message: "Bookmark removed",
     });
 }));

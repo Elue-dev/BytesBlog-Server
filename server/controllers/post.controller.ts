@@ -7,6 +7,17 @@ import { slugify } from "../helpers/slugify";
 import { AuthenticatedRequest } from "../models/types/auth";
 import { AUTHOR_FIELDS } from "../utils/author.fields";
 
+const LIKE_FIELDS = {
+  id: true,
+  avatar: true,
+  firstName: true,
+  lastName: true,
+  bio: true,
+  joinedAt: true,
+  interests: true,
+  posts: true,
+};
+
 export const addPost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { title, content, image, readTime, categories } = req.body;
@@ -55,7 +66,13 @@ export const getPosts = handleAsync(
         author: {
           select: AUTHOR_FIELDS,
         },
-        likes: true,
+        likes: {
+          include: {
+            user: {
+              select: LIKE_FIELDS,
+            },
+          },
+        },
         bookmarks: true,
       },
       orderBy: {
