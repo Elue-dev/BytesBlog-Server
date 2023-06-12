@@ -11,6 +11,7 @@ exports.AUTHOR_FIELDS = {
 exports.LIKE_FIELDS = {
     id: true,
     avatar: true,
+    email: true,
     firstName: true,
     lastName: true,
     bio: true,
@@ -21,6 +22,7 @@ exports.LIKE_FIELDS = {
 exports.AUTHOR_FIELDS_LONGER = {
     id: true,
     avatar: true,
+    email: true,
     firstName: true,
     lastName: true,
     bio: true,

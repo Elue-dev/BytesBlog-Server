@@ -9,6 +9,7 @@ export const AUTHOR_FIELDS = {
 export const LIKE_FIELDS = {
   id: true,
   avatar: true,
+  email: true,
   firstName: true,
   lastName: true,
   bio: true,
@@ -20,6 +21,7 @@ export const LIKE_FIELDS = {
 export const AUTHOR_FIELDS_LONGER = {
   id: true,
   avatar: true,
+  email: true,
   firstName: true,
   lastName: true,
   bio: true,
