@@ -90,7 +90,7 @@ const welcome = (username) => {
                               text-align: left;
                             "
                           >
-                            Welcome on board, ${username}! 🎉
+                            Welcome on BytesBlog, ${username}! 🎉
                           </h1>
                           <span
                             style="
@@ -110,9 +110,7 @@ const welcome = (username) => {
                                 margin: 0;
                               "
                             >
-                              Thank you for joining Bytes Blog! You are now ready
-                              to get started and explore everything that Bytes Blog
-                              has to offer.
+                            We're thrilled to have you as a new member of our community. Get ready to explore engaging articles, share your thoughts.
                             </p>
                             <br />
                             <p
@@ -123,9 +121,7 @@ const welcome = (username) => {
                                 margin: 0;
                               "
                             >
-                              We hope you enjoy our services and have a nice
-                              experience with us. Feel free to reach out to us for
-                              any questions you may have.
+                            We encourage you to dive right in and contribute to the ongoing tapestry of ideas. Share your own experiences, insights, and stories, and let your voice be heard. Connect with fellow bloggers who share your passions and interests, building lasting connections along the way. Happy reading and writing!
                             </p>
                           </span>
     
