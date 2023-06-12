@@ -56,7 +56,7 @@ export const getPosts = handleAsync(
     const posts = await prisma.post.findMany({
       include: {
         author: {
-          select: AUTHOR_FIELDS,
+          select: AUTHOR_FIELDS_LONGER,
         },
         likes: {
           include: {

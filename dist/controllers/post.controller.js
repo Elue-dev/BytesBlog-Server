@@ -50,7 +50,7 @@ exports.getPosts = (0, async_handler_1.default)((req, res, next) => __awaiter(vo
     const posts = yield prisma_client_1.default.post.findMany({
         include: {
             author: {
-                select: fields_1.AUTHOR_FIELDS,
+                select: fields_1.AUTHOR_FIELDS_LONGER,
             },
             likes: {
                 include: {
