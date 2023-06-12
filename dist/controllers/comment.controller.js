@@ -129,7 +129,7 @@ exports.getPostComments = (0, async_handler_1.default)((req, res, next) => __awa
     });
 }));
 exports.addComment = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     const { message, parentId, postId, authorEmail, path, isReplying } = req.body;
     let missingFields = [];
     let bodyObject = { message, postId, authorEmail, path };
@@ -171,13 +171,15 @@ exports.addComment = (0, async_handler_1.default)((req, res, next) => __awaiter(
     const replyBody = (0, reply_email_1.emailReply)(post === null || post === void 0 ? void 0 : post.author.firstName, path, message);
     const commentBody = (0, comment_email_1.commentEmail)(commentAuthor === null || commentAuthor === void 0 ? void 0 : commentAuthor.firstName, path, message);
     try {
-        (0, email_service_1.default)({
-            subject: isReplying ? replySubject : commentSubject,
-            body: isReplying ? replyBody : commentBody,
-            send_to: isReplying ? reply_send_to : comment_send_to,
-            sent_from,
-            reply_to,
-        });
+        if (authorEmail !== ((_b = req.user) === null || _b === void 0 ? void 0 : _b.email)) {
+            (0, email_service_1.default)({
+                subject: isReplying ? replySubject : commentSubject,
+                body: isReplying ? replyBody : commentBody,
+                send_to: isReplying ? reply_send_to : comment_send_to,
+                sent_from,
+                reply_to,
+            });
+        }
         res.status(200).json({
             status: "success",
             comment,

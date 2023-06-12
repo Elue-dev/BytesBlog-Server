@@ -187,13 +187,16 @@ export const addComment = handleAsync(
     const commentBody = commentEmail(commentAuthor?.firstName!, path, message);
 
     try {
-      sendEmail({
-        subject: isReplying ? replySubject : commentSubject,
-        body: isReplying ? replyBody : commentBody,
-        send_to: isReplying ? reply_send_to : comment_send_to,
-        sent_from,
-        reply_to,
-      });
+      if (authorEmail !== req.user?.email) {
+        sendEmail({
+          subject: isReplying ? replySubject : commentSubject,
+          body: isReplying ? replyBody : commentBody,
+          send_to: isReplying ? reply_send_to : comment_send_to,
+          sent_from,
+          reply_to,
+        });
+      }
+
       res.status(200).json({
         status: "success",
         comment,
