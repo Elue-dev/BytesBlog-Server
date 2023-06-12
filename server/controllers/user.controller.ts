@@ -5,7 +5,6 @@ import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
 import { generateToken } from "../helpers/generate.token";
 import { AuthenticatedRequest } from "../models/types/auth";
-import { AUTHOR_FIELDS } from "../utils/author.fields";
 
 export const getUsers = handleAsync(
   async (req: Request, res: Response, next: NextFunction) => {

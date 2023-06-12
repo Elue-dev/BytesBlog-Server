@@ -18,17 +18,7 @@ const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
 const slugify_1 = require("../helpers/slugify");
-const author_fields_1 = require("../utils/author.fields");
-const LIKE_FIELDS = {
-    id: true,
-    avatar: true,
-    firstName: true,
-    lastName: true,
-    bio: true,
-    joinedAt: true,
-    interests: true,
-    posts: true,
-};
+const fields_1 = require("../utils/fields");
 exports.addPost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { title, content, image, readTime, categories } = req.body;
@@ -61,12 +51,12 @@ exports.getPosts = (0, async_handler_1.default)((req, res, next) => __awaiter(vo
     const posts = yield prisma_client_1.default.post.findMany({
         include: {
             author: {
-                select: author_fields_1.AUTHOR_FIELDS,
+                select: fields_1.AUTHOR_FIELDS,
             },
             likes: {
                 include: {
                     user: {
-                        select: LIKE_FIELDS,
+                        select: fields_1.LIKE_FIELDS,
                     },
                 },
             },
@@ -88,35 +78,26 @@ exports.getSinglePost = (0, async_handler_1.default)((req, res, next) => __await
         },
         include: {
             author: {
-                select: author_fields_1.AUTHOR_FIELDS,
+                select: fields_1.AUTHOR_FIELDS_LONGER,
             },
             bookmarks: {
                 include: {
                     user: {
-                        select: author_fields_1.AUTHOR_FIELDS,
+                        select: fields_1.AUTHOR_FIELDS,
                     },
                 },
             },
             comments: {
                 include: {
                     author: {
-                        select: author_fields_1.AUTHOR_FIELDS,
+                        select: fields_1.AUTHOR_FIELDS,
                     },
                 },
             },
             likes: {
                 include: {
                     user: {
-                        select: {
-                            id: true,
-                            avatar: true,
-                            firstName: true,
-                            lastName: true,
-                            bio: true,
-                            joinedAt: true,
-                            interests: true,
-                            posts: true,
-                        },
+                        select: fields_1.AUTHOR_FIELDS_LONGER,
                     },
                 },
             },

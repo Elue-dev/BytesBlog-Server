@@ -5,18 +5,11 @@ import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
 import { slugify } from "../helpers/slugify";
 import { AuthenticatedRequest } from "../models/types/auth";
-import { AUTHOR_FIELDS } from "../utils/author.fields";
-
-const LIKE_FIELDS = {
-  id: true,
-  avatar: true,
-  firstName: true,
-  lastName: true,
-  bio: true,
-  joinedAt: true,
-  interests: true,
-  posts: true,
-};
+import {
+  AUTHOR_FIELDS,
+  AUTHOR_FIELDS_LONGER,
+  LIKE_FIELDS,
+} from "../utils/fields";
 
 export const addPost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -95,7 +88,7 @@ export const getSinglePost = handleAsync(
       },
       include: {
         author: {
-          select: AUTHOR_FIELDS,
+          select: AUTHOR_FIELDS_LONGER,
         },
         bookmarks: {
           include: {
@@ -114,16 +107,7 @@ export const getSinglePost = handleAsync(
         likes: {
           include: {
             user: {
-              select: {
-                id: true,
-                avatar: true,
-                firstName: true,
-                lastName: true,
-                bio: true,
-                joinedAt: true,
-                interests: true,
-                posts: true,
-              },
+              select: AUTHOR_FIELDS_LONGER,
             },
           },
         },
