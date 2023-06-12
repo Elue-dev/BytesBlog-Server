@@ -16,7 +16,7 @@ exports.removePostFromBookmarks = exports.getBookmarks = exports.addRemoveBookma
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
-const author_fields_1 = require("../utils/author.fields");
+const fields_1 = require("../utils/fields");
 exports.addRemoveBookmark = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     const { postId } = req.params;
@@ -62,7 +62,7 @@ exports.getBookmarks = (0, async_handler_1.default)((req, res, next) => __awaite
             post: {
                 include: {
                     author: {
-                        select: author_fields_1.AUTHOR_FIELDS,
+                        select: fields_1.AUTHOR_FIELDS,
                     },
                 },
             },

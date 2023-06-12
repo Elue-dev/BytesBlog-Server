@@ -4,7 +4,7 @@ import prisma from "../db/prisma.client";
 import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
 import { AuthenticatedRequest } from "../models/types/auth";
-import { AUTHOR_FIELDS } from "../utils/author.fields";
+import { AUTHOR_FIELDS } from "../utils/fields";
 
 export const addRemoveBookmark = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
