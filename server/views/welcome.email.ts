@@ -87,7 +87,7 @@ export const welcome = (username: string) => {
                               text-align: left;
                             "
                           >
-                            Welcome on BytesBlog, ${username}! 🎉
+                            Welcome to BytesBlog, ${username}! 🎉
                           </h1>
                           <span
                             style="
