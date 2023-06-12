@@ -14,7 +14,6 @@ import {
 export const addPost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { title, content, image, readTime, categories } = req.body;
-    console.log(categories);
 
     let missingFields = [];
     let bodyObject = { title, content, image, readTime };
@@ -124,6 +123,8 @@ export const getSinglePost = handleAsync(
 export const updatePost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { title, content, image, readTime, categories } = req.body;
+
+    console.log({ content });
 
     if (!title && !content && !image && !readTime)
       return next(

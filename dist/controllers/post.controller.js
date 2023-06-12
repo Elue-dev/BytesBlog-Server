@@ -22,7 +22,6 @@ const fields_1 = require("../utils/fields");
 exports.addPost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { title, content, image, readTime, categories } = req.body;
-    console.log(categories);
     let missingFields = [];
     let bodyObject = { title, content, image, readTime };
     for (let field in bodyObject) {
@@ -110,6 +109,7 @@ exports.getSinglePost = (0, async_handler_1.default)((req, res, next) => __await
 }));
 exports.updatePost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, content, image, readTime, categories } = req.body;
+    console.log({ content });
     if (!title && !content && !image && !readTime)
         return next(new global_error_1.AppError("Please provide at least one detail you want to update", 400));
     const post = yield prisma_client_1.default.post.findFirst({
