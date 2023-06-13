@@ -5,6 +5,7 @@ import handleAsync from "../helpers/async.handler";
 import { AppError } from "../helpers/global.error";
 import { AuthenticatedRequest } from "../models/types/auth";
 import sendEmail from "../services/email.service";
+import { AUTHOR_FIELDS_LONGER } from "../utils/fields";
 import { commentEmail } from "../views/comment.email";
 import { emailReply } from "../views/reply.email";
 
@@ -88,18 +89,9 @@ export const getPostComments = handleAsync(
       },
       include: {
         author: {
-          select: {
-            id: true,
-            avatar: true,
-            email: true,
-            firstName: true,
-            lastName: true,
-            bio: true,
-            joinedAt: true,
-            interests: true,
-            posts: true,
-          },
+          select: AUTHOR_FIELDS_LONGER,
         },
+
         children: {
           include: {
             author: {
@@ -116,6 +108,7 @@ export const getPostComments = handleAsync(
             },
           },
         },
+        likes: true,
       },
       orderBy: {
         createdAt: Prisma.SortOrder.desc,

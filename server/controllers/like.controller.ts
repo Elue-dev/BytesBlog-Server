@@ -50,3 +50,50 @@ export const likeDislikePost = handleAsync(
     });
   }
 );
+
+export const likeDislikeComment = handleAsync(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const { commentId } = req.params;
+
+    if (!commentId)
+      return next(new AppError("Please provide the id of the post", 400));
+
+    const commentToLike = await prisma.comment.findFirst({
+      where: {
+        id: commentId,
+      },
+      include: {
+        likes: true,
+      },
+    });
+
+    if (!commentToLike)
+      return next(new AppError("Post could not be found", 400));
+
+    const userHasCommented = commentToLike?.likes?.find(
+      (like: Like) => like.userId === req.user?.id
+    );
+
+    if (userHasCommented) {
+      await prisma.like.deleteMany({
+        where: {
+          userId: req.user?.id!,
+          commentId,
+        },
+      });
+    } else {
+      await prisma.like.create({
+        data: {
+          type: "post",
+          userId: req.user?.id!,
+          commentId,
+        },
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: userHasCommented ? "Comment Unliked" : "Comment liked",
+    });
+  }
+);

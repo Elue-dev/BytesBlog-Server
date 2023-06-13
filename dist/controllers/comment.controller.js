@@ -18,6 +18,7 @@ const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
 const email_service_1 = __importDefault(require("../services/email.service"));
+const fields_1 = require("../utils/fields");
 const comment_email_1 = require("../views/comment.email");
 const reply_email_1 = require("../views/reply.email");
 const AUTHOR_FIELDS = {
@@ -90,17 +91,7 @@ exports.getPostComments = (0, async_handler_1.default)((req, res, next) => __awa
         },
         include: {
             author: {
-                select: {
-                    id: true,
-                    avatar: true,
-                    email: true,
-                    firstName: true,
-                    lastName: true,
-                    bio: true,
-                    joinedAt: true,
-                    interests: true,
-                    posts: true,
-                },
+                select: fields_1.AUTHOR_FIELDS_LONGER,
             },
             children: {
                 include: {
@@ -118,6 +109,7 @@ exports.getPostComments = (0, async_handler_1.default)((req, res, next) => __awa
                     },
                 },
             },
+            likes: true,
         },
         orderBy: {
             createdAt: client_1.Prisma.SortOrder.desc,

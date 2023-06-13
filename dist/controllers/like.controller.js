@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.likeDislikePost = void 0;
+exports.likeDislikeComment = exports.likeDislikePost = void 0;
 const prisma_client_1 = __importDefault(require("../db/prisma.client"));
 const async_handler_1 = __importDefault(require("../helpers/async.handler"));
 const global_error_1 = require("../helpers/global.error");
@@ -52,5 +52,43 @@ exports.likeDislikePost = (0, async_handler_1.default)((req, res, next) => __awa
     res.status(200).json({
         status: "success",
         message: userHasLiked ? "Post Unliked" : "Post liked",
+    });
+}));
+exports.likeDislikeComment = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _d, _e, _f;
+    const { commentId } = req.params;
+    if (!commentId)
+        return next(new global_error_1.AppError("Please provide the id of the post", 400));
+    const commentToLike = yield prisma_client_1.default.comment.findFirst({
+        where: {
+            id: commentId,
+        },
+        include: {
+            likes: true,
+        },
+    });
+    if (!commentToLike)
+        return next(new global_error_1.AppError("Post could not be found", 400));
+    const userHasCommented = (_d = commentToLike === null || commentToLike === void 0 ? void 0 : commentToLike.likes) === null || _d === void 0 ? void 0 : _d.find((like) => { var _a; return like.userId === ((_a = req.user) === null || _a === void 0 ? void 0 : _a.id); });
+    if (userHasCommented) {
+        yield prisma_client_1.default.like.deleteMany({
+            where: {
+                userId: (_e = req.user) === null || _e === void 0 ? void 0 : _e.id,
+                commentId,
+            },
+        });
+    }
+    else {
+        yield prisma_client_1.default.like.create({
+            data: {
+                type: "post",
+                userId: (_f = req.user) === null || _f === void 0 ? void 0 : _f.id,
+                commentId,
+            },
+        });
+    }
+    res.status(200).json({
+        status: "success",
+        message: userHasCommented ? "Comment Unliked" : "Comment liked",
     });
 }));
