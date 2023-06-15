@@ -52,7 +52,7 @@ export const signup = handleAsync(
     if (userExists && userExists.withGoogle)
       return next(
         new AppError(
-          "Account has been signed up with google, sign in instead",
+          "Account has already been signed up with google, sign in instead",
           400
         )
       );
