@@ -2,7 +2,7 @@ generator client {
   provider = "prisma-client-js"
 }
 datasource db {
-  provider = "mongodb"
+  provider = "mongodb" //switched from Postgres due to free cloud database expiration 
   url      = env("DATABASE_URL")
 }
 
