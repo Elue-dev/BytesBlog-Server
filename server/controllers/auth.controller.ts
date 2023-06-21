@@ -211,7 +211,7 @@ export const forgotPassword = handleAsync(
           ? `An email has been sent to ${email} with instructions
         to create a password for your google account`
           : `An email has been sent to ${email} with instructions
-        to reset your password. Please ensure to check your spam folder, Click on 'Report as not spam' so you can keep get our emails in your inbox`,
+        to reset your password. Please ensure to check your spam folder, Click on 'Report as not spam' so you can keep getting our emails in your inbox`,
       });
     } catch (error) {
       res.status(500).json({
