@@ -53,7 +53,7 @@ exports.signup = (0, async_handler_1.default)((req, res, next) => __awaiter(void
         return next(new global_error_1.AppError(`user ${missingFields.join(", ")} ${missingFields.length > 1 ? "are" : "is"} required`, 400));
     const userExists = yield prisma_client_1.default.user.findFirst({ where: { email } });
     if (userExists && userExists.withGoogle)
-        return next(new global_error_1.AppError("Account has been signed up with google, sign in instead", 400));
+        return next(new global_error_1.AppError("Account has already been signed up with google, sign in instead", 400));
     if (userExists)
         return next(new global_error_1.AppError("Email already in use", 400));
     const salt = (0, bcryptjs_1.genSaltSync)(10);
@@ -77,9 +77,12 @@ exports.signup = (0, async_handler_1.default)((req, res, next) => __awaiter(void
     const body = (0, welcome_email_1.welcome)(newUser.lastName);
     try {
         (0, email_service_1.default)({ subject, body, send_to, sent_from, reply_to });
-        res.status(201).json({
+        const token = (0, generate_token_1.generateToken)(newUser.id);
+        const { password: _password } = newUser, userWithoutPassword = __rest(newUser, ["password"]);
+        const userInfo = Object.assign({ token }, userWithoutPassword);
+        res.status(200).json({
             status: "success",
-            message: "User created.",
+            user: userInfo,
         });
     }
     catch (error) {

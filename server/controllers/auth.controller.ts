@@ -83,9 +83,12 @@ export const signup = handleAsync(
 
     try {
       sendEmail({ subject, body, send_to, sent_from, reply_to });
-      res.status(201).json({
+      const token = generateToken(newUser.id);
+      const { password: _password, ...userWithoutPassword } = newUser;
+      const userInfo = { token, ...userWithoutPassword };
+      res.status(200).json({
         status: "success",
-        message: "User created.",
+        user: userInfo,
       });
     } catch (error) {
       res.status(500).json({

@@ -60,6 +60,7 @@ exports.getPosts = (0, async_handler_1.default)((req, res, next) => __awaiter(vo
                 },
             },
             bookmarks: true,
+            comments: true,
         },
         orderBy: {
             createdAt: client_1.Prisma.SortOrder.desc,

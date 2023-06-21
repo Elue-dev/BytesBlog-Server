@@ -66,6 +66,7 @@ export const getPosts = handleAsync(
           },
         },
         bookmarks: true,
+        comments: true,
       },
       orderBy: {
         createdAt: Prisma.SortOrder.desc,
