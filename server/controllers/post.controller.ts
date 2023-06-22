@@ -89,11 +89,6 @@ export const getSinglePost = handleAsync(
       include: {
         author: {
           select: AUTHOR_FIELDS_LONGER,
-          where: {
-            author: {
-              not: null,
-            },
-          },
         },
         bookmarks: {
           include: {
@@ -125,6 +120,7 @@ export const getSinglePost = handleAsync(
     });
   }
 );
+
 
 export const updatePost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
