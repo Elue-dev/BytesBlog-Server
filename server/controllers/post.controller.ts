@@ -82,7 +82,7 @@ export const getPosts = handleAsync(
 
 export const getSinglePost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const post = await prisma.post.findMany({
+    const post = await prisma.post.findUnique({
       where: {
         OR: [{ slug: req.params.slug }, { id: req.params.postId }],
       },
