@@ -74,7 +74,7 @@ exports.getPosts = (0, async_handler_1.default)((req, res, next) => __awaiter(vo
 exports.getSinglePost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield prisma_client_1.default.post.findFirst({
         where: {
-            OR: [{ slug: req.params.slug }, { id: req.params.postId }],
+            AND: [{ slug: req.params.slug }, { id: req.params.postId }],
         },
         include: {
             author: {
@@ -110,12 +110,11 @@ exports.getSinglePost = (0, async_handler_1.default)((req, res, next) => __await
 }));
 exports.updatePost = (0, async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, content, image, readTime, categories } = req.body;
-    console.log({ content });
     if (!title && !content && !image && !readTime)
         return next(new global_error_1.AppError("Please provide at least one detail you want to update", 400));
     const post = yield prisma_client_1.default.post.findFirst({
         where: {
-            slug: req.params.slug,
+            AND: [{ slug: req.params.slug }, { id: req.params.postId }],
         },
     });
     if (!post)

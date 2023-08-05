@@ -84,7 +84,7 @@ export const getSinglePost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const post = await prisma.post.findFirst({
       where: {
-        OR: [{ slug: req.params.slug }, { id: req.params.postId }],
+        AND: [{ slug: req.params.slug }, { id: req.params.postId }],
       },
       include: {
         author: {
@@ -125,8 +125,6 @@ export const updatePost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { title, content, image, readTime, categories } = req.body;
 
-    console.log({ content });
-
     if (!title && !content && !image && !readTime)
       return next(
         new AppError(
@@ -137,7 +135,7 @@ export const updatePost = handleAsync(
 
     const post = await prisma.post.findFirst({
       where: {
-        slug: req.params.slug,
+        AND: [{ slug: req.params.slug }, { id: req.params.postId }],
       },
     });
 
