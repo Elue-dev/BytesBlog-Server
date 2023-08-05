@@ -82,7 +82,7 @@ export const getPosts = handleAsync(
 
 export const getSinglePost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const post = await prisma.post.findUnique({
+    const post = await prisma.post.findFirst({
       where: {
         OR: [{ slug: req.params.slug }, { id: req.params.postId }],
       },
@@ -120,7 +120,6 @@ export const getSinglePost = handleAsync(
     });
   }
 );
-
 
 export const updatePost = handleAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
