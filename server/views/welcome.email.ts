@@ -121,7 +121,7 @@ export const welcome = (username: string) => {
                             We encourage you to dive right in and contribute to the ongoing tapestry of ideas. Share your own experiences, insights, and stories, and let your voice be heard. Connect with fellow bloggers who share your passions and interests, building lasting connections along the way. Happy reading and writing!
                             </p>
                           </span>
-    
+                            <br />
                           <span style="text-align: left; font-size: 18px">
                             <p>
                               Regards,<br />

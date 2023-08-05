@@ -163,7 +163,9 @@ export const passwordResetEmail = ({
                             withGoogle ? "creation" : "reset"
                           }, you can ignore
                           this email. ${
-                            !withGoogle && "Your password will not be changed."
+                            !withGoogle
+                              ? "Your password will not be changed."
+                              : ""
                           } 
                         </p>
 

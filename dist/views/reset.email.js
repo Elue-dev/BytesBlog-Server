@@ -153,7 +153,9 @@ const passwordResetEmail = ({ username, url, withGoogle, }) => {
                           "
                         >
                           If you didn't request a password ${withGoogle ? "creation" : "reset"}, you can ignore
-                          this email. ${!withGoogle && "Your password will not be changed."} 
+                          this email. ${!withGoogle
+        ? "Your password will not be changed."
+        : ""} 
                         </p>
 
                         <tr>

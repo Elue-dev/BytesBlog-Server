@@ -21,7 +21,11 @@ app.use(json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://bytes-blog-client.vercel.app"],
+    origin: [
+      "http://localhost:5173",
+      "https://bytes-blog-client.vercel.app",
+      "exp://172.20.10.10:19000",
+    ],
     credentials: true,
   })
 );

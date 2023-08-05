@@ -45,7 +45,11 @@ app.use((req, res, next) => {
 app.use((0, express_1.json)());
 app.use((0, cookie_parser_1.default)());
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:5173", "https://bytes-blog-client.vercel.app"],
+    origin: [
+        "http://localhost:5173",
+        "https://bytes-blog-client.vercel.app",
+        "exp://172.20.10.10:19000",
+    ],
     credentials: true,
 }));
 app.use((req, res, next) => {
