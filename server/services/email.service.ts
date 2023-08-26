@@ -3,8 +3,7 @@ import { Email } from "../models/types/general";
 
 const sendEmail = ({ subject, body, send_to, sent_from, reply_to }: Email) => {
   const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: 587,
+    service: "gmail",
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
